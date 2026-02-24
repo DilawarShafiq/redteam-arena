@@ -13,7 +13,7 @@
     "lint": "eslint src/"
   },
   "keywords": ["ai", "security", "red-team", "adversarial", "agents", "cybersecurity", "pentesting", "automated-security"],
-  "author": "Muhammad Dilawar Shafiq (Dilawar Gopang) <dilawar@autosapien.com> (https://github.com/DilawarShafiq)",
+  "author": "Muhammad Dilawar Shafiq (Dilawar Gopang) <dilawar.gopang@gmail.com> (https://github.com/DilawarShafiq)",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
