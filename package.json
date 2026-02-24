@@ -1,0 +1,21 @@
+{
+  "name": "redteam-arena",
+  "version": "0.1.0",
+  "description": "AI vs AI adversarial security testing platform. Red team agents attack, blue team agents defend. Fully automated.",
+  "main": "dist/index.js",
+  "bin": {
+    "redteam-arena": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/cli.ts",
+    "test": "vitest",
+    "lint": "eslint src/"
+  },
+  "keywords": ["ai", "security", "red-team", "adversarial", "agents", "cybersecurity", "pentesting", "automated-security"],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
