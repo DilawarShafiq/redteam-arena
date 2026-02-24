@@ -4,9 +4,18 @@
   "type": "module",
   "description": "AI vs AI adversarial security testing platform. Red team agents attack, blue team agents defend. Fully automated.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "redteam-arena": "dist/cli.js"
   },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "dist/**/*.js.map",
+    "dist/scenarios/builtin/*.md",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc && npx copyfiles -u 1 \"src/scenarios/builtin/*.md\" dist",
     "dev": "npx tsx src/cli.ts",
