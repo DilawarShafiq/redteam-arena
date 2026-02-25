@@ -7,7 +7,29 @@
       "Bash(which specifyplus 2>/dev/null || npx specifyplus --help 2>&1 | head -30 || npm list -g specifyplus 2>&1)",
       "Bash(specifyplus:*)",
       "Bash(head:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && git fetch --all --prune 2>&1)",
+      "Bash(ls:*)",
+      "Bash(cd:*)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(git:*)",
+      "Bash(echo AGENT_CONTEXT_SKIP:*)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npx tsc && node dist/cli.js 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npx tsc --noEmit 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npx tsc 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && node dist/cli.js --help 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && node dist/cli.js --version 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npm run build 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && node dist/cli.js list 2>&1)",
+      "Bash(echo EXIT: $?:*)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npx vitest run tests/unit/event-system.test.ts 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npx vitest run tests/unit/file-reader.test.ts 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npx vitest run tests/unit/battle-report.test.ts 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npx vitest run tests/unit/response-parser.test.ts 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npx vitest run tests/unit/ 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npx vitest run 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && npm run build 2>&1 && node dist/cli.js list 2>&1)",
+      "Bash(cd /c/Users/DilawarShafiq/redteam-arena && git ls-files | xargs grep -l \"DilawarShafiq\" 2>/dev/null)"
     ]
   }
 }

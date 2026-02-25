@@ -7,7 +7,7 @@ surface: agent
 model: claude-opus-4-6
 feature: 001-static-battle-mode
 branch: 001-static-battle-mode
-user: DilawarGopang
+user: DilawarShafiq
 command: /sp.implement
 labels: ["implementation", "mvp", "static-battle-mode", "green", "all-phases"]
 links:

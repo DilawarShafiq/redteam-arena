@@ -7,7 +7,7 @@ surface: agent
 model: claude-sonnet-4-6
 feature: none
 branch: 001-static-battle-mode
-user: TechTiesIbrahim
+user: DilawarShafiq
 command: write 5 unit test files
 labels: ["tests","vitest","unit","event-system","scenario","file-reader","battle-report","response-parser"]
 links:
@@ -31,7 +31,7 @@ tests:
 
 ## Prompt
 
-Write the following test files for the redteam-arena project at C:\Users\TechTiesIbrahim\redteam-arena. The project uses Vitest, TypeScript, ESM (import/export). All imports need `.js` extensions.
+Write the following test files for the redteam-arena project at C:\Users\DilawarShafiq\redteam-arena. The project uses Vitest, TypeScript, ESM (import/export). All imports need `.js` extensions.
 
 Write these 5 test files:
 

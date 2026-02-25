@@ -7,7 +7,7 @@ surface: agent
 model: claude-opus-4-6
 feature: 001-static-battle-mode
 branch: 001-static-battle-mode
-user: TechTiesIbrahim
+user: DilawarShafiq
 command: /sp.plan
 labels: ["plan", "architecture", "design", "static-battle-mode", "research"]
 links:

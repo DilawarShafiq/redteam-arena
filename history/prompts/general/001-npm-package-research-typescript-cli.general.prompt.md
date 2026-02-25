@@ -7,7 +7,7 @@ surface: agent
 model: claude-sonnet-4-6
 feature: none
 branch: main
-user: TechTiesIbrahim
+user: DilawarShafiq
 command: research npm packages for TypeScript CLI tool
 labels: ["research","npm","typescript","esm","cli","commander","chalk","anthropic","gray-matter","nanoid","tsconfig"]
 links:
