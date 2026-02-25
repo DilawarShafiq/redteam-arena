@@ -1,0 +1,163 @@
+"""
+Battle report generator -- produces Markdown reports from Battle objects.
+"""
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+from redteam_arena.types import Battle, Finding, Mitigation, Severity
+
+SEVERITY_EMOJI: dict[str, str] = {
+    "critical": "!!",
+    "high": "!",
+    "medium": "~",
+    "low": "-",
+}
+
+
+def generate_report(battle: Battle) -> str:
+    """Generate a Markdown battle report."""
+    all_findings: list[Finding] = []
+    all_mitigations: list[Mitigation] = []
+    for r in battle.rounds:
+        all_findings.extend(r.findings)
+        all_mitigations.extend(r.mitigations)
+
+    lines: list[str] = []
+
+    # Header
+    lines.append("# RedTeam Arena Battle Report")
+    lines.append("")
+    lines.append("| Field | Value |")
+    lines.append("|-------|-------|")
+    lines.append(f"| **Battle ID** | {battle.id} |")
+    lines.append(f"| **Date** | {battle.started_at.isoformat()} |")
+    lines.append(f"| **Scenario** | {battle.config.scenario.name} |")
+    lines.append(f"| **Target** | {battle.config.target_dir} |")
+    lines.append(f"| **Rounds** | {len(battle.rounds)} |")
+    lines.append(f"| **Status** | {battle.status} |")
+    lines.append("")
+
+    # Summary
+    lines.append("## Summary")
+    lines.append("")
+
+    by_severity: dict[str, int] = {"critical": 0, "high": 0, "medium": 0, "low": 0}
+    for f in all_findings:
+        by_severity[f.severity] += 1
+
+    lines.append("| Severity | Count |")
+    lines.append("|----------|-------|")
+    lines.append(f"| Critical | {by_severity['critical']} |")
+    lines.append(f"| High | {by_severity['high']} |")
+    lines.append(f"| Medium | {by_severity['medium']} |")
+    lines.append(f"| Low | {by_severity['low']} |")
+    lines.append(f"| **Total** | **{len(all_findings)}** |")
+    lines.append("")
+
+    coverage = (
+        round((len(all_mitigations) / len(all_findings)) * 100)
+        if all_findings
+        else 100
+    )
+    lines.append(
+        f"**Mitigations Proposed**: {len(all_mitigations)}/{len(all_findings)} ({coverage}%)"
+    )
+    lines.append("")
+
+    # Findings Detail
+    if not all_findings:
+        lines.append("## Findings")
+        lines.append("")
+        lines.append("No vulnerabilities found.")
+        lines.append("")
+    else:
+        lines.append("## Findings")
+        lines.append("")
+
+        for i, finding in enumerate(all_findings):
+            mitigation = next(
+                (m for m in all_mitigations if m.finding_id == finding.id), None
+            )
+
+            emoji = SEVERITY_EMOJI.get(finding.severity, "?")
+            lines.append(
+                f"### {emoji} Finding {i + 1}: {finding.description[:80]}"
+            )
+            lines.append("")
+            lines.append("| Field | Value |")
+            lines.append("|-------|-------|")
+            lines.append(f"| **Severity** | {finding.severity.upper()} |")
+            lines.append(
+                f"| **File** | `{finding.file_path}:{finding.line_reference}` |"
+            )
+            lines.append(f"| **Attack Vector** | {finding.attack_vector} |")
+            lines.append(f"| **Round** | {finding.round_number} |")
+            lines.append("")
+
+            if finding.code_snippet:
+                lines.append("**Vulnerable Code**:")
+                lines.append("```")
+                lines.append(finding.code_snippet)
+                lines.append("```")
+                lines.append("")
+
+            if mitigation:
+                lines.append(
+                    f"**Mitigation** (Confidence: {mitigation.confidence.upper()}):"
+                )
+                lines.append("")
+                lines.append(f"> {mitigation.acknowledgment}")
+                lines.append("")
+                lines.append(f"**Proposed Fix**: {mitigation.proposed_fix}")
+                lines.append("")
+
+            lines.append("---")
+            lines.append("")
+
+    # Battle Log
+    lines.append("## Battle Log")
+    lines.append("")
+    lines.append("<details>")
+    lines.append("<summary>Click to expand full battle log</summary>")
+    lines.append("")
+
+    for rnd in battle.rounds:
+        lines.append(f"### Round {rnd.number}")
+        lines.append("")
+        lines.append("**Red Agent Output:**")
+        lines.append("```")
+        lines.append(rnd.red_raw_output[:2000])
+        if len(rnd.red_raw_output) > 2000:
+            lines.append("... (truncated)")
+        lines.append("```")
+        lines.append("")
+        lines.append("**Blue Agent Output:**")
+        lines.append("```")
+        lines.append(rnd.blue_raw_output[:2000])
+        if len(rnd.blue_raw_output) > 2000:
+            lines.append("... (truncated)")
+        lines.append("```")
+        lines.append("")
+
+    lines.append("</details>")
+    lines.append("")
+
+    # Footer
+    lines.append("---")
+    lines.append(
+        "*Generated by [RedTeam Arena](https://github.com/DilawarShafiq/redteam-arena) v0.1.0*"
+    )
+
+    return "\n".join(lines)
+
+
+async def write_report(content: str, battle_id: str) -> str:
+    """Write the report to a file and return the file path."""
+    filename = f"redteam-report-{battle_id}.md"
+    filepath = os.path.join(os.getcwd(), filename)
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(content)
+    return filepath
