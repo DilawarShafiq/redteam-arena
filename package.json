@@ -36,6 +36,14 @@
   ],
   "author": "Muhammad Dilawar Shafiq (Dilawar Gopang) <dilawar.gopang@gmail.com> (https://github.com/DilawarShafiq)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DilawarShafiq/redteam-arena.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DilawarShafiq/redteam-arena/issues"
+  },
+  "homepage": "https://github.com/DilawarShafiq/redteam-arena#readme",
   "engines": {
     "node": ">=18.0.0"
   },
