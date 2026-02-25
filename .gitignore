@@ -1,14 +1,44 @@
-node_modules/
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
 dist/
 build/
-.env
-.env.*
-*.log
-*.tmp
-*.swp
-.DS_Store
-Thumbs.db
+*.egg
+.eggs/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
 .vscode/
 .idea/
+*.swp
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs and temp
+*.log
+*.tmp
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
 coverage/
+.tox/
+
+# Node (legacy, can be removed after full migration)
+node_modules/
 *.tsbuildinfo

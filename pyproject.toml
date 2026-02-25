@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "redteam-arena"
+version = "0.1.0"
+description = "AI vs AI adversarial security testing platform. Red team agents attack, blue team agents defend. Fully automated."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Muhammad Dilawar Shafiq (Dilawar Gopang)", email = "dilawar.gopang@gmail.com"},
+]
+keywords = [
+    "ai",
+    "security",
+    "red-team",
+    "adversarial",
+    "agents",
+    "cybersecurity",
+    "pentesting",
+    "automated-security",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+]
+dependencies = [
+    "anthropic>=0.40.0",
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.23.0",
+]
+
+[project.scripts]
+redteam-arena = "redteam_arena.cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/DilawarShafiq/redteam-arena"
+Repository = "https://github.com/DilawarShafiq/redteam-arena.git"
+Issues = "https://github.com/DilawarShafiq/redteam-arena/issues"
+
+[tool.setuptools.packages.find]
+include = ["redteam_arena*"]
+
+[tool.setuptools.package-data]
+redteam_arena = ["scenarios/builtin/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
