@@ -7,7 +7,7 @@ surface: agent
 model: claude-opus-4-6
 feature: none
 branch: main
-user: TechTiesIbrahim
+user: DilawarShafiq
 command: /sp.constitution
 labels: ["constitution", "principles", "ratification", "project-setup"]
 links:
@@ -26,8 +26,8 @@ tests:
 
 Write the constitution for the redteam-arena project.
 
-1. Read the existing template at C:\Users\TechTiesIbrahim\redteam-arena\.specify\memory\constitution.md
-2. Read the README at C:\Users\TechTiesIbrahim\redteam-arena\README.md for project context
+1. Read the existing template at C:\Users\DilawarShafiq\redteam-arena\.specify\memory\constitution.md
+2. Read the README at C:\Users\DilawarShafiq\redteam-arena\README.md for project context
 3. Fill in all placeholders with concrete values. The project is:
 
 **RedTeam Arena** -- AI vs AI adversarial security testing platform. Red team agents attack, blue team agents defend. Fully automated.
@@ -42,7 +42,7 @@ Core principles:
 
 Tech stack: TypeScript, Node.js, npm distribution. Testing: vitest. Code quality: strict TypeScript, ESM modules.
 
-4. Write the completed constitution to C:\Users\TechTiesIbrahim\redteam-arena\.specify\memory\constitution.md
+4. Write the completed constitution to C:\Users\DilawarShafiq\redteam-arena\.specify\memory\constitution.md
 
 Include the Sync Impact Report as HTML comment at top. Version 1.0.0, ratified 2026-02-24.
 

@@ -1,6 +1,14 @@
 node_modules/
 dist/
+build/
 .env
+.env.*
 *.log
+*.tmp
+*.swp
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
 coverage/
+*.tsbuildinfo
