@@ -17,7 +17,8 @@ DEFAULT_MODEL = "claude-sonnet-4-20250514"
 
 
 class ClaudeAdapter(Provider):
-    def __init__(self, api_key: str | None = None) -> None:
+    def __init__(self, api_key: str | None = None, model: str = "") -> None:
+        self._model = model
         self._client = anthropic.Anthropic(
             api_key=api_key or os.environ.get("ANTHROPIC_API_KEY", ""),
         )
@@ -30,10 +31,10 @@ class ClaudeAdapter(Provider):
         ]
 
         with self._client.messages.stream(
-            model=options.model or DEFAULT_MODEL,
+            model=options.model or self._model or DEFAULT_MODEL,
             max_tokens=options.max_tokens,
             system=options.system_prompt,
-            messages=anthropic_messages,
+            messages=anthropic_messages,  # type: ignore[arg-type]
         ) as stream:
             for text in stream.text_stream:
                 yield text

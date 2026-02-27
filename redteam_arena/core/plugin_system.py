@@ -6,6 +6,7 @@ Supports agent, provider, reporter, and scorer plugin types.
 from __future__ import annotations
 
 import importlib
+import importlib.util
 import json
 import os
 from dataclasses import dataclass

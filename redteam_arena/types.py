@@ -133,6 +133,9 @@ class BattleConfig:
     target_dir: str
     scenario: Scenario
     rounds: int
+    provider: ProviderId = "claude"
+    model: str = ""
+    format: ReportFormat = "markdown"
 
 
 # --- Battle Event (discriminated union via type field) ---

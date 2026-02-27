@@ -13,6 +13,7 @@ from redteam_arena.types import (
 )
 
 console = Console()
+_err_console = Console(stderr=True)
 
 SEVERITY_STYLES: dict[str, str] = {
     "critical": "bold white on red",
@@ -142,7 +143,7 @@ def display_report_path(path: str) -> None:
 
 
 def display_error(message: str) -> None:
-    console.print(f"\n  Error: {message}\n", style="bold red", stderr=True)
+    _err_console.print(f"\n  Error: {message}\n", style="bold red")
 
 
 def display_warning(message: str) -> None:

@@ -153,10 +153,19 @@ def generate_report(battle: Battle) -> str:
     return "\n".join(lines)
 
 
-async def write_report(content: str, battle_id: str) -> str:
+async def write_report(
+    content: str,
+    battle_id: str,
+    *,
+    extension: str = "md",
+    output_path: str = "",
+) -> str:
     """Write the report to a file and return the file path."""
-    filename = f"redteam-report-{battle_id}.md"
-    filepath = os.path.join(os.getcwd(), filename)
+    if output_path:
+        filepath = output_path
+    else:
+        filename = f"redteam-report-{battle_id}.{extension}"
+        filepath = os.path.join(os.getcwd(), filename)
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(content)
     return filepath

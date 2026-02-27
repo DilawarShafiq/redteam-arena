@@ -82,10 +82,10 @@ class OpenAIAdapter(Provider):
         response = await self._client.chat.completions.create(
             model=model,
             max_tokens=options.max_tokens,
-            messages=openai_messages,
+            messages=openai_messages,  # type: ignore[arg-type]
             stream=True,
         )
 
-        async for chunk in response:
+        async for chunk in response:  # type: ignore[union-attr]
             if chunk.choices and chunk.choices[0].delta.content:
                 yield chunk.choices[0].delta.content

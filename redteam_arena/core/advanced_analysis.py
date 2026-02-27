@@ -140,7 +140,7 @@ def analyze_vulnerability_chains(
 
         if has_critical or (has_high and len(file_findings) >= 2):
             chain_id += 1
-            combined = "critical" if has_critical else "high"
+            combined: Severity = "critical" if has_critical else "high"
             chains.append(
                 VulnerabilityChain(
                     id=f"chain-{chain_id}",

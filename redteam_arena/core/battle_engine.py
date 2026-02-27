@@ -49,6 +49,7 @@ class BattleEngineOptions:
     blue_agent: Agent
     config: BattleConfig
     on_interrupt: object | None = None
+    override_files: list[FileEntry] | None = None
 
 
 class BattleEngine:
@@ -58,6 +59,7 @@ class BattleEngine:
         self._config = options.config
         self._events = BattleEventSystem()
         self._interrupted = False
+        self._override_files = options.override_files
 
         self._battle = Battle(
             id=uuid.uuid4().hex[:8],
@@ -84,12 +86,15 @@ class BattleEngine:
 
     async def run(self) -> Battle:
         """Run the full battle loop."""
-        # Read codebase
-        code_result = await read_codebase(self._config.target_dir)
-        if not code_result.ok:
-            raise RuntimeError(code_result.error.args[0] if code_result.error.args else str(code_result.error))
+        # Use override_files (e.g. from --diff) or read codebase
+        if self._override_files is not None:
+            files = self._override_files
+        else:
+            code_result = await read_codebase(self._config.target_dir)
+            if not code_result.ok:
+                raise RuntimeError(code_result.error.args[0] if code_result.error.args else str(code_result.error))
+            files = code_result.value
 
-        files = code_result.value
         if not has_source_files(files):
             raise RuntimeError(f"No source files found in {self._config.target_dir}")
 

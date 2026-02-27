@@ -37,8 +37,9 @@ After your analysis, output your mitigations as a JSON block:
 
 
 class BlueAgent(Agent):
-    def __init__(self, provider: Provider) -> None:
+    def __init__(self, provider: Provider, *, model: str = "") -> None:
         self._provider = provider
+        self._model = model
 
     async def analyze(self, context: AgentContext) -> AsyncIterator[str]:
         system_prompt = _build_blue_system_prompt(context)

@@ -9,6 +9,7 @@ import os
 import threading
 import time
 from collections.abc import Callable
+from typing import Any
 
 from rich.console import Console
 
@@ -60,7 +61,7 @@ class WatchMode:
         self._output_path = output_path
         self._on_change = on_change
 
-        self._observer: object | None = None
+        self._observer: Any = None
         self._changed_files: set[str] = set()
         self._debounce_timer: threading.Timer | None = None
         self._ignore_patterns: list[str] = []
@@ -92,8 +93,8 @@ class WatchMode:
 
             handler = _WatchdogHandler(self)
             self._observer = Observer()
-            self._observer.schedule(handler, self._target_dir, recursive=True)  # type: ignore[union-attr]
-            self._observer.start()  # type: ignore[union-attr]
+            self._observer.schedule(handler, self._target_dir, recursive=True)
+            self._observer.start()
             console.print("  (using watchdog for cross-platform watching)", style="dim")
         except ImportError:
             console.print(
@@ -112,8 +113,8 @@ class WatchMode:
             self._debounce_timer = None
 
         if self._observer is not None:
-            self._observer.stop()  # type: ignore[union-attr]
-            self._observer.join()  # type: ignore[union-attr]
+            self._observer.stop()
+            self._observer.join()
             self._observer = None
 
         self._changed_files.clear()

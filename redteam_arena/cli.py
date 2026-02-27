@@ -273,9 +273,9 @@ async def _run_single_battle(
         target_dir=target_dir,
         scenario=scenario,
         rounds=rounds,
-        provider=provider_id,  # type: ignore[assignment]
+        provider=provider_id,  # type: ignore[arg-type]
         model=model,
-        format=report_format,  # type: ignore[assignment]
+        format=report_format,  # type: ignore[arg-type]
     )
 
     engine = BattleEngine(
@@ -498,7 +498,7 @@ def benchmark(suite: str, provider: str | None, model: str | None, list_suites: 
         suites = list_benchmark_suites()
         click.echo("\nAvailable Benchmark Suites:\n")
         for s in suites:
-            click.echo(f"  {s['name'].ljust(25)}{s['patterns']} patterns, {s['categories']} categories")
+            click.echo(f"  {str(s['name']).ljust(25)}{s['patterns']} patterns, {s['categories']} categories")
         click.echo()
         return
 
