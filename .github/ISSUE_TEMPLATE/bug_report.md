@@ -27,9 +27,9 @@ What actually happened. Include error output if applicable.
 ## Environment
 
 - **OS:** (e.g., Ubuntu 22.04, macOS 14, Windows 11)
-- **Node.js version:** (run `node -v`)
+- **Python version:** (run `python --version`)
 - **RedTeam Arena version:** (run `redteam-arena --version`)
-- **npm version:** (run `npm -v`)
+- **LLM provider:** (claude / openai / gemini / ollama)
 
 ## Additional Context
 
