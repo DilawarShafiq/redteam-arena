@@ -8,8 +8,12 @@
 [![Python](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/DilawarShafiq/redteam-arena/actions/workflows/ci.yml/badge.svg)](https://github.com/DilawarShafiq/redteam-arena/actions/workflows/ci.yml)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/redteam-arena.svg)](https://pypi.org/project/redteam-arena/)
 
 Red team agents attack. Blue team agents defend. Fully automated.
+
+<!-- Add a demo GIF here — record with `asciinema` or any screen recorder -->
+<!-- ![RedTeam Arena Demo](https://your-gif-url-here.gif) -->
 
 </div>
 
@@ -310,3 +314,15 @@ To report a security vulnerability in RedTeam Arena itself, see [SECURITY.md](SE
 ## License
 
 [MIT](LICENSE) — Muhammad Dilawar Shafiq (Dilawar Gopang)
+
+---
+
+<div align="center">
+
+**If RedTeam Arena is useful to you, please star it — it helps others find it.**
+
+[![GitHub Stars](https://img.shields.io/github/stars/DilawarShafiq/redteam-arena?style=social)](https://github.com/DilawarShafiq/redteam-arena)
+
+[Report a bug](https://github.com/DilawarShafiq/redteam-arena/issues/new?template=bug_report.md) · [Request a feature](https://github.com/DilawarShafiq/redteam-arena/issues/new?template=feature_request.md) · [Contribute](CONTRIBUTING.md)
+
+</div>

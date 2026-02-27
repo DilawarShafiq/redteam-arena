@@ -37,6 +37,8 @@ Thumbs.db
 htmlcov/
 .coverage
 coverage/
+.mypy_cache/
+.ruff_cache/
 .tox/
 
 # Node (legacy, can be removed after full migration)
