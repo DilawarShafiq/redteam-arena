@@ -9,7 +9,7 @@ import json
 import re
 import uuid
 
-from redteam_arena.types import Finding, Mitigation, Ok, Err, Result, Severity, Confidence
+from redteam_arena.types import Confidence, Finding, Mitigation, Ok, Result, Severity
 
 SEVERITY_VALUES = {"critical", "high", "medium", "low"}
 CONFIDENCE_VALUES = {"high", "medium", "low"}

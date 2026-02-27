@@ -6,9 +6,8 @@ Respects extension filters, directory exclusions, and size caps.
 from __future__ import annotations
 
 import os
-from pathlib import Path
 
-from redteam_arena.types import FileEntry, Ok, Err, Result
+from redteam_arena.types import Err, FileEntry, Ok, Result
 
 SOURCE_EXTENSIONS: set[str] = {
     ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",
@@ -117,7 +116,7 @@ def _walk_directory(
                 if total_size_ref[0] + file_size > max_total_size:
                     continue
 
-                with open(full_path, "r", encoding="utf-8") as f:
+                with open(full_path, encoding="utf-8") as f:
                     content = f.read()
 
                 relative_path = os.path.relpath(full_path, root_dir)

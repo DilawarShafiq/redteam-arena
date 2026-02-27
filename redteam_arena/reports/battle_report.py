@@ -5,9 +5,8 @@ Battle report generator -- produces Markdown reports from Battle objects.
 from __future__ import annotations
 
 import os
-from pathlib import Path
 
-from redteam_arena.types import Battle, Finding, Mitigation, Severity
+from redteam_arena.types import Battle, Finding, Mitigation
 
 SEVERITY_EMOJI: dict[str, str] = {
     "critical": "!!",

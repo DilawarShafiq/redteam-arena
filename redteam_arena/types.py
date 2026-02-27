@@ -7,8 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
-from typing import Generic, Literal, TypeVar, Union
+from typing import Generic, Literal, TypeVar
 
 # --- Severity ---
 
@@ -17,6 +16,12 @@ Severity = Literal["critical", "high", "medium", "low"]
 # --- Confidence ---
 
 Confidence = Literal["high", "medium", "low"]
+
+# --- Provider & Report ---
+
+ProviderId = Literal["claude", "openai", "gemini", "ollama"]
+
+ReportFormat = Literal["markdown", "json", "sarif", "html"]
 
 # --- Finding ---
 
@@ -69,6 +74,7 @@ class Scenario:
     severity_guidance: str
     red_guidance: str
     blue_guidance: str
+    tags: list[str] = field(default_factory=list)
     is_meta: bool = False
     sub_scenarios: list[str] = field(default_factory=list)
 
@@ -190,15 +196,15 @@ class ErrorEvent:
     phase: str = ""
 
 
-BattleEvent = Union[
-    BattleStartEvent,
-    RoundStartEvent,
-    AttackEvent,
-    DefendEvent,
-    RoundEndEvent,
-    BattleEndEvent,
-    ErrorEvent,
-]
+BattleEvent = (
+    BattleStartEvent
+    | RoundStartEvent
+    | AttackEvent
+    | DefendEvent
+    | RoundEndEvent
+    | BattleEndEvent
+    | ErrorEvent
+)
 
 
 # --- Battle Summary ---
@@ -245,4 +251,4 @@ class Err(Generic[E]):
     ok: Literal[False] = False
 
 
-Result = Union[Ok[T], Err[E]]
+Result = Ok[T] | Err[E]

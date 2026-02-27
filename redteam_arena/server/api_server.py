@@ -11,8 +11,6 @@ import secrets
 from datetime import datetime
 from typing import Any
 
-from redteam_arena.types import BattleConfig, BattleSummary
-
 # Lazy imports -- FastAPI/uvicorn are optional dependencies
 _app = None
 
@@ -24,9 +22,8 @@ def _get_app():
         return _app
 
     try:
-        from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends
+        from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
         from fastapi.middleware.cors import CORSMiddleware
-        from fastapi.responses import JSONResponse
     except ImportError as exc:
         raise ImportError(
             "FastAPI required for API server. "
@@ -160,9 +157,9 @@ async def _run_battle_async(
 ) -> None:
     """Run a battle asynchronously and update state."""
     try:
+        from redteam_arena.agents.blue_agent import BlueAgent
         from redteam_arena.agents.provider_registry import create_provider
         from redteam_arena.agents.red_agent import RedAgent
-        from redteam_arena.agents.blue_agent import BlueAgent
         from redteam_arena.core.battle_engine import BattleEngine, BattleEngineOptions
         from redteam_arena.types import BattleConfig
 

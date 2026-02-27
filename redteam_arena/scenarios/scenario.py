@@ -10,7 +10,7 @@ import re
 
 import yaml
 
-from redteam_arena.types import Scenario, Ok, Err, Result
+from redteam_arena.types import Err, Ok, Result, Scenario
 
 # The builtin scenarios directory is alongside this module
 BUILTIN_DIR = os.path.join(os.path.dirname(__file__), "builtin")
@@ -64,13 +64,14 @@ def _parse_guidance_sections(body: str) -> tuple[str, str]:
     return red_guidance, blue_guidance
 
 
-async def load_scenario(name: str) -> Result[Scenario, Exception]:
-    """Load a scenario by name from the builtin directory."""
-    file_path = os.path.join(BUILTIN_DIR, f"{name}.md")
+async def load_scenario(name: str, *, scenario_dir: str = "") -> Result[Scenario, Exception]:
+    """Load a scenario by name from the builtin or custom directory."""
+    search_dir = scenario_dir if scenario_dir and os.path.isdir(scenario_dir) else BUILTIN_DIR
+    file_path = os.path.join(search_dir, f"{name}.md")
 
     raw: str | None = None
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             raw = f.read()
     except OSError:
         pass
@@ -93,28 +94,39 @@ async def load_scenario(name: str) -> Result[Scenario, Exception]:
             severity_guidance=frontmatter.get("severity_guidance", ""),
             red_guidance=red_guidance,
             blue_guidance=blue_guidance,
+            tags=frontmatter.get("tags", []),
             is_meta=frontmatter.get("is_meta", False),
             sub_scenarios=frontmatter.get("sub_scenarios", []),
         )
     )
 
 
-async def list_scenarios() -> list[Scenario]:
-    """List all available builtin scenarios."""
+async def list_scenarios(
+    *,
+    tags: list[str] | None = None,
+    exclude_tags: list[str] | None = None,
+    scenario_dir: str = "",
+) -> list[Scenario]:
+    """List all available scenarios, optionally filtered by tags."""
+    search_dir = scenario_dir if scenario_dir and os.path.isdir(scenario_dir) else BUILTIN_DIR
     scenarios: list[Scenario] = []
 
     try:
-        files = sorted(os.listdir(BUILTIN_DIR))
+        files = sorted(os.listdir(search_dir))
         for filename in files:
             if not filename.endswith(".md"):
                 continue
             name = filename.replace(".md", "")
-            result = await load_scenario(name)
+            result = await load_scenario(name, scenario_dir=scenario_dir)
             if result.ok:
-                # Avoid duplicates
                 if not any(s.name == result.value.name for s in scenarios):
                     scenarios.append(result.value)
     except OSError:
         pass
+
+    if tags:
+        scenarios = [s for s in scenarios if any(t in s.tags for t in tags)]
+    if exclude_tags:
+        scenarios = [s for s in scenarios if not any(t in s.tags for t in exclude_tags)]
 
     return scenarios

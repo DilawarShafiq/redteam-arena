@@ -7,10 +7,9 @@ from rich.console import Console
 from rich.text import Text
 
 from redteam_arena.types import (
+    BattleSummary,
     Finding,
     Mitigation,
-    BattleSummary,
-    Severity,
 )
 
 console = Console()

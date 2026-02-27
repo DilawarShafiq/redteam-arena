@@ -6,23 +6,23 @@ Alternates agent turns, tracks state, emits events.
 from __future__ import annotations
 
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 
 from redteam_arena.agents.agent import Agent
 from redteam_arena.agents.response_parser import parse_findings, parse_mitigations
 from redteam_arena.core.event_system import BattleEventSystem
-from redteam_arena.core.file_reader import read_codebase, has_source_files
+from redteam_arena.core.file_reader import has_source_files, read_codebase
 from redteam_arena.display import (
-    display_red_header,
-    display_red_chunk,
-    display_blue_header,
-    display_blue_chunk,
     display_agent_done,
-    display_round_start,
-    display_round_end,
+    display_blue_chunk,
+    display_blue_header,
     display_finding,
     display_mitigation,
+    display_red_chunk,
+    display_red_header,
+    display_round_end,
+    display_round_start,
 )
 from redteam_arena.types import (
     AgentContext,
@@ -40,7 +40,6 @@ from redteam_arena.types import (
     Round,
     RoundEndEvent,
     RoundStartEvent,
-    Severity,
 )
 
 

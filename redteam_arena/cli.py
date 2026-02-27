@@ -16,14 +16,13 @@ import click
 from redteam_arena.display import (
     display_battle_header,
     display_battle_summary,
-    display_report_path,
     display_error,
-    display_no_findings,
     display_interrupted,
+    display_no_findings,
+    display_report_path,
     display_warning,
 )
-from redteam_arena.types import BattleConfig, BattleSummary, Scenario, Severity
-
+from redteam_arena.types import BattleConfig, BattleSummary, Scenario
 
 # --- Helpers ---
 
@@ -141,13 +140,12 @@ async def _battle_async(
     pr_comment: bool,
 ) -> None:
     """Full async battle implementation."""
-    from redteam_arena.agents.provider_registry import create_provider, detect_provider, validate_provider
-    from redteam_arena.agents.red_agent import RedAgent
-    from redteam_arena.agents.blue_agent import BlueAgent
-    from redteam_arena.core.battle_engine import BattleEngine, BattleEngineOptions
-    from redteam_arena.core.config import load_config, merge_config
-    from redteam_arena.reports.battle_report import generate_report, write_report
-    from redteam_arena.scenarios.scenario import load_scenario, list_scenarios
+    from redteam_arena.agents.provider_registry import (
+        detect_provider,
+        validate_provider,
+    )
+    from redteam_arena.core.config import load_config
+    from redteam_arena.scenarios.scenario import list_scenarios, load_scenario
 
     # Load config file
     target_dir = os.path.abspath(directory)
@@ -246,9 +244,9 @@ async def _run_single_battle(
     pr_comment: bool,
 ) -> None:
     """Run a single battle with all options."""
+    from redteam_arena.agents.blue_agent import BlueAgent
     from redteam_arena.agents.provider_registry import create_provider
     from redteam_arena.agents.red_agent import RedAgent
-    from redteam_arena.agents.blue_agent import BlueAgent
     from redteam_arena.core.battle_engine import BattleEngine, BattleEngineOptions
     from redteam_arena.core.battle_store import BattleStore
     from redteam_arena.reports.battle_report import generate_report, write_report
@@ -355,7 +353,10 @@ async def _run_single_battle(
 
     # Advanced analysis
     if do_analyze and all_findings:
-        from redteam_arena.core.advanced_analysis import run_advanced_analysis, format_advanced_analysis
+        from redteam_arena.core.advanced_analysis import (
+            format_advanced_analysis,
+            run_advanced_analysis,
+        )
         from redteam_arena.core.file_reader import read_codebase
         code_result = await read_codebase(target_dir)
         if code_result.ok:
@@ -364,7 +365,7 @@ async def _run_single_battle(
 
     # Auto-fix
     if (auto_fix or auto_fix_dry_run) and all_findings:
-        from redteam_arena.core.auto_fix import run_auto_fix, format_auto_fix_summary
+        from redteam_arena.core.auto_fix import format_auto_fix_summary, run_auto_fix
         fix_result = await run_auto_fix(
             target_dir, battle_result, dry_run=auto_fix_dry_run,
         )
@@ -450,8 +451,8 @@ async def _watch_async(
     provider_id: str | None, model: str | None,
 ) -> None:
     from redteam_arena.agents.provider_registry import detect_provider
-    from redteam_arena.scenarios.scenario import load_scenario
     from redteam_arena.core.watcher import WatchMode
+    from redteam_arena.scenarios.scenario import load_scenario
 
     target_dir = os.path.abspath(directory)
     if not os.path.isdir(target_dir):
@@ -505,12 +506,15 @@ def benchmark(suite: str, provider: str | None, model: str | None, list_suites: 
 
 
 async def _benchmark_async(suite_name: str, provider_id: str | None, model: str | None) -> None:
+    from redteam_arena.agents.blue_agent import BlueAgent
     from redteam_arena.agents.provider_registry import create_provider, detect_provider
     from redteam_arena.agents.red_agent import RedAgent
-    from redteam_arena.agents.blue_agent import BlueAgent
     from redteam_arena.core.battle_engine import BattleEngine, BattleEngineOptions
     from redteam_arena.core.benchmark import (
-        get_benchmark_suite, create_benchmark_files, evaluate_results, format_benchmark_result,
+        create_benchmark_files,
+        evaluate_results,
+        format_benchmark_result,
+        get_benchmark_suite,
     )
     from redteam_arena.scenarios.scenario import load_scenario
 
@@ -567,7 +571,7 @@ def history(scenario: str | None, limit: int, trends: bool, regression: bool, ta
 async def _history_async(
     scenario: str | None, limit: int, show_trends: bool, show_regression: bool, target: str | None,
 ) -> None:
-    from redteam_arena.core.battle_store import BattleStore, BattleQuery
+    from redteam_arena.core.battle_store import BattleQuery, BattleStore
 
     store = BattleStore()
 
