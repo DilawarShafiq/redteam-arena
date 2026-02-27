@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "redteam-arena"
-version = "0.1.0"
+version = "0.0.1"
 description = "AI vs AI adversarial security testing platform. Red team agents attack, blue team agents defend. Fully automated."
 readme = "README.md"
 license = {text = "MIT"}
@@ -37,12 +37,22 @@ dependencies = [
     "click>=8.1.0",
     "rich>=13.0.0",
     "pyyaml>=6.0",
+    "openai>=1.0.0",
+    "httpx>=0.25.0",
+    "watchdog>=3.0.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
     "pytest-asyncio>=0.23.0",
+    "mypy>=1.0",
+    "ruff>=0.3.0",
+]
+server = [
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "websockets>=12.0",
 ]
 
 [project.scripts]
@@ -62,3 +72,16 @@ redteam_arena = ["scenarios/builtin/*.md"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+ignore_missing_imports = true

@@ -56,6 +56,9 @@ async def read_codebase(
     max_total_size: int = MAX_TOTAL_SIZE,
 ) -> Result[list[FileEntry], Exception]:
     """Recursively read source files from target_dir."""
+    if not os.path.isdir(target_dir):
+        return Err(error=Exception(f"Directory not found: {target_dir}"))
+
     files: list[FileEntry] = []
 
     try:

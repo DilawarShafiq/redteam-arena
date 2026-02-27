@@ -1,0 +1,18 @@
+# .redteamarena.yml — RedTeam Arena configuration
+# Copy this file to your project root as .redteamarena.yml
+
+# LLM provider: claude | openai | gemini | ollama
+# Defaults to auto-detect based on available API keys
+provider: claude
+
+# Model to use (leave empty for provider default)
+# Claude defaults: claude-sonnet-4-20250514
+# OpenAI defaults: gpt-4o
+# Gemini defaults: gemini-1.5-pro
+model: ""
+
+# Number of battle rounds per scenario
+rounds: 5
+
+# Default report format: markdown | json | sarif | html
+format: markdown

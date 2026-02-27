@@ -32,4 +32,4 @@ Include as much detail as possible:
 
 | Version | Supported |
 |---------|-----------|
-| 0.1.x   | Yes       |
+| 0.0.x   | Yes       |
