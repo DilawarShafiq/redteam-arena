@@ -1,3 +1,6 @@
+# Claude Code local settings (may contain API keys)
+.claude/settings.local.json
+
 # Python
 __pycache__/
 *.py[cod]
