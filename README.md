@@ -12,8 +12,7 @@
 
 Red team agents attack. Blue team agents defend. Fully automated.
 
-<!-- Add a demo GIF here — record with `asciinema` or any screen recorder -->
-<!-- ![RedTeam Arena Demo](https://your-gif-url-here.gif) -->
+![RedTeam Arena Demo](./demo.gif)
 
 </div>
 
