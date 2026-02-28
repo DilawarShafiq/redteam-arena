@@ -33,7 +33,7 @@ def _get_app():
     app = FastAPI(
         title="RedTeam Arena API",
         description="AI vs AI adversarial security testing",
-        version="0.0.3",
+        version="0.0.4",
     )
 
     app.add_middleware(

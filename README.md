@@ -25,7 +25,7 @@ Red team agents attack. Blue team agents defend. Fully automated.
 - **Enterprise-grade auditing** — go beyond simple exploits with specialized compliance agents for SOC 2, ISO 27001, HIPAA, FedRAMP, and more.
 - **Zero setup** — point it at a directory, pick a scenario, get a report. No config files, no infrastructure, no learning curve.
 - **Multi-provider** — works with Claude, OpenAI, Gemini, and local Ollama models out of the box.
-- **40+ built-in scenarios** — OWASP Top 10, AI-specific attacks, and high-end enterprise compliance frameworks.
+- **45+ built-in scenarios** — OWASP Top 10, AI-specific attacks, APT attack chains, and high-end enterprise compliance frameworks.
 
 ## Quick Start
 
@@ -43,7 +43,7 @@ redteam-arena battle ./my-project --scenario sql-injection
 ### What you'll see
 
 ```
-  REDTEAM ARENA v0.0.3
+  REDTEAM ARENA v0.0.4
   Scenario: sql-injection | Target: ./my-project
   ==================================================
 
@@ -215,6 +215,8 @@ redteam-arena serve --port 3000
 
 | Scenario | Description |
 |----------|-------------|
+| `apt-advanced-persistent-threat` | Simulates an ALPHV/BlackCat style attack chain (LotL, MFA bypass, lateral movement) |
+| `infrastructure-as-code` | Audits Terraform, Kubernetes, and Docker for cloud misconfigurations |
 | `iso-42001-ai-compliance` | Audit for ISO/IEC 42001 Artificial Intelligence Management System |
 | `soc2-security-privacy` | Audit for SOC 2 Trust Services Criteria (Security, Privacy, Logging) |
 | `fedramp-readiness` | Audit for FedRAMP / NIST 800-53 technical control readiness |

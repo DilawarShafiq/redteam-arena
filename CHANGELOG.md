@@ -6,7 +6,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [0.0.2] — 2026-02-28
+## [0.0.4] — 2026-02-28
+
+### Added
+- **APT Threat Actor Persona** — Overhauled the Red Agent system prompt to think like an elite black-hat operator (e.g., ALPHV/BlackCat), focusing on "Living off the Land" (LotL) and chained attack paths.
+- **Strict Zero-Trust Auditor** — Updated the Auditor Agent to automatically flag missing MFA, missing RBAC, and session vulnerabilities as Critical/High failures.
+- **APT Scenario** (`apt-advanced-persistent-threat`) — A new scenario specifically designed to hunt for MFA bypasses, Kerberos/AD token exploitation, and lateral movement.
+- **Infrastructure as Code Scenario** (`infrastructure-as-code`) — A new scenario for auditing Terraform, Kubernetes, Docker, and CI/CD pipelines for cloud misconfigurations.
+
+---
+
+## [0.0.3] — 2026-02-28
 
 ### Added
 - **Enterprise Auditor Agent** (`--agent-mode auditor`) — A specialized agent for compliance and architectural audits.
@@ -40,5 +50,6 @@ First public release.
 - **Programmatic Python API** — full import surface for embedding in other tools
 - **Config file support** — `.redteamarena.yml` for per-project settings
 
-[0.0.2]: https://github.com/DilawarShafiq/redteam-arena/releases/tag/v0.0.2
+[0.0.4]: https://github.com/DilawarShafiq/redteam-arena/releases/tag/v0.0.4
+[0.0.3]: https://github.com/DilawarShafiq/redteam-arena/releases/tag/v0.0.3
 [0.0.1]: https://github.com/DilawarShafiq/redteam-arena/releases/tag/v0.0.1

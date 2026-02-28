@@ -32,7 +32,7 @@ SEVERITY_LABELS: dict[str, str] = {
 
 def display_battle_header(scenario: str, target_dir: str) -> None:
     console.print()
-    console.print("  REDTEAM ARENA v0.0.3", style="bold white")
+    console.print("  REDTEAM ARENA v0.0.4", style="bold white")
     console.print(f"  Scenario: {scenario} | Target: {target_dir}", style="dim")
     console.print("  " + "=" * 50, style="dim")
     console.print()

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "redteam-arena"
-version = "0.0.3"
+version = "0.0.4"
 description = "AI vs AI adversarial security testing platform. Red team agents attack, blue team agents defend. Fully automated."
 readme = "README.md"
 license = {text = "MIT"}

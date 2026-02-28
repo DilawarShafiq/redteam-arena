@@ -44,7 +44,7 @@ def _should_fail(findings: list, fail_on: str | None) -> bool:
 
 
 @click.group()
-@click.version_option("0.0.3", prog_name="redteam-arena")
+@click.version_option("0.0.4", prog_name="redteam-arena")
 def cli() -> None:
     """AI vs AI adversarial security testing. Red team attacks, blue team defends."""
 
