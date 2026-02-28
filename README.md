@@ -22,9 +22,10 @@ Red team agents attack. Blue team agents defend. Fully automated.
 
 - **Proactive, not reactive** — AI agents that think like attackers probe your code 24/7, instead of waiting for the next CVE.
 - **Attack + defense in one run** — every vulnerability found gets an immediate mitigation proposal, so you ship fixes, not just findings.
+- **Enterprise-grade auditing** — go beyond simple exploits with specialized compliance agents for SOC 2, ISO 27001, HIPAA, FedRAMP, and more.
 - **Zero setup** — point it at a directory, pick a scenario, get a report. No config files, no infrastructure, no learning curve.
 - **Multi-provider** — works with Claude, OpenAI, Gemini, and local Ollama models out of the box.
-- **33 built-in scenarios** — OWASP Top 10, AI-specific attacks (prompt injection, data poisoning, agent hijacking), and more.
+- **40+ built-in scenarios** — OWASP Top 10, AI-specific attacks, and high-end enterprise compliance frameworks.
 
 ## Quick Start
 
@@ -42,7 +43,7 @@ redteam-arena battle ./my-project --scenario sql-injection
 ### What you'll see
 
 ```
-  REDTEAM ARENA v0.0.2
+  REDTEAM ARENA v0.0.3
   Scenario: sql-injection | Target: ./my-project
   ==================================================
 
@@ -80,8 +81,10 @@ Run a security battle against a target codebase.
 | `-r, --rounds <n>` | Number of battle rounds | `5` |
 | `-p, --provider <name>` | LLM provider: `claude`, `openai`, `gemini`, `ollama` | auto-detect |
 | `-m, --model <name>` | Specific model to use | provider default |
-| `-f, --format <fmt>` | Report format: `markdown`, `json`, `sarif`, `html` | `markdown` |
+| `-f, --format <fmt>` | Report format: `markdown`, `json`, `sarif`, `html`, `compliance` | `markdown` |
 | `-o, --output <path>` | Output file path | auto-generated |
+| `--agent-mode <mode>` | Agent focus: `attacker` (default) or `auditor` | `attacker` |
+| `--mock-llm` | Use a mock LLM for testing/demo (fast & free) | `false` |
 | `--diff` | Only scan changed files (git diff) | `false` |
 | `--auto-fix` | Generate fix suggestions as a branch | `false` |
 | `--fail-on <sev>` | Exit non-zero if severity found: `critical`, `high`, `medium`, `low` | — |
@@ -103,6 +106,9 @@ redteam-arena battle ./src --scenario secrets-exposure --diff
 
 # Use OpenAI instead of Claude
 redteam-arena battle ./src --scenario xss --provider openai --model gpt-4o
+
+# Run a HIPAA/HITECH healthcare compliance audit
+redteam-arena battle ./medical-app --scenario hipaa-hitech-readiness --agent-mode auditor --format compliance
 
 # SARIF output for GitHub Code Scanning
 redteam-arena battle ./src --scenario full-audit --format sarif -o results.sarif.json
@@ -205,11 +211,20 @@ redteam-arena serve --port 3000
 | `vector-embedding-weakness` | Vulnerabilities in embedding-based retrieval |
 | `cascading-failures` | Failure propagation in multi-agent systems |
 
-### Meta
+### Enterprise & Compliance
 
 | Scenario | Description |
 |----------|-------------|
-| `full-audit` | Run all scenarios sequentially |
+| `iso-42001-ai-compliance` | Audit for ISO/IEC 42001 Artificial Intelligence Management System |
+| `soc2-security-privacy` | Audit for SOC 2 Trust Services Criteria (Security, Privacy, Logging) |
+| `fedramp-readiness` | Audit for FedRAMP / NIST 800-53 technical control readiness |
+| `hipaa-hitech-readiness` | US Healthcare compliance audit (ePHI security and audit logs) |
+| `hitrust-csf-compliance` | High-end healthcare framework audit (DLP, device trust) |
+| `epcs-dea-compliance` | DEA regulations for Electronic Prescriptions for Controlled Substances |
+| `pci-dss-readiness` | Payment Card Industry (PCI DSS v4.0) readiness audit |
+| `iso-27001-infosec.md` | Audit for ISO/IEC 27001 Information Security Management System |
+| `cmmc-dod-readiness.md` | Audit for CMMC Level 2 (DoD) security requirements |
+| `gdpr-ccpa-privacy.md` | Audit for global privacy laws (GDPR/CCPA/ISO 27701) |
 
 ## How It Works
 
