@@ -44,7 +44,7 @@ def _should_fail(findings: list, fail_on: str | None) -> bool:
 
 
 @click.group()
-@click.version_option("0.0.1", prog_name="redteam-arena")
+@click.version_option("0.0.2", prog_name="redteam-arena")
 def cli() -> None:
     """AI vs AI adversarial security testing. Red team attacks, blue team defends."""
 
@@ -58,7 +58,7 @@ def cli() -> None:
 @click.option("-r", "--rounds", default=5, type=int, show_default=True, help="Number of battle rounds")
 @click.option("-p", "--provider", default=None, help="LLM provider (claude, openai, gemini, ollama)")
 @click.option("-m", "--model", default=None, help="Specific model to use")
-@click.option("-f", "--format", "report_format", default=None, type=click.Choice(["markdown", "json", "sarif", "html"]), help="Report format")
+@click.option("-f", "--format", "report_format", default=None, type=click.Choice(["markdown", "json", "sarif", "html", "compliance"]), help="Report format")
 @click.option("-o", "--output", default=None, help="Output file path")
 @click.option("--diff/--no-diff", default=False, help="Only scan changed files (git diff)")
 @click.option("--diff-base", default="HEAD~1", show_default=True, help="Git ref for diff base")
@@ -70,6 +70,8 @@ def cli() -> None:
 @click.option("--exclude-tag", multiple=True, help="Exclude scenarios by tag")
 @click.option("--scenario-dir", default=None, help="Custom scenario directory")
 @click.option("--pr-comment/--no-pr-comment", default=False, help="Post results as GitHub PR comment")
+@click.option("--agent-mode", default="attacker", type=click.Choice(["attacker", "auditor"]), help="Mode for the primary agent")
+@click.option("--mock-llm", is_flag=True, default=False, help="Use a mock LLM for testing/demo")
 def battle(
     directory: str,
     scenario_name: str,
@@ -88,6 +90,8 @@ def battle(
     exclude_tag: tuple[str, ...],
     scenario_dir: str | None,
     pr_comment: bool,
+    agent_mode: str,
+    mock_llm: bool,
 ) -> None:
     """Start a security battle against a target codebase."""
     try:
@@ -110,6 +114,8 @@ def battle(
                 exclude_tags=list(exclude_tag),
                 scenario_dir=scenario_dir or "",
                 pr_comment=pr_comment,
+                agent_mode=agent_mode,
+                mock_llm=mock_llm,
             )
         )
     except SystemExit:
@@ -138,6 +144,8 @@ async def _battle_async(
     exclude_tags: list[str],
     scenario_dir: str,
     pr_comment: bool,
+    agent_mode: str,
+    mock_llm: bool,
 ) -> None:
     """Full async battle implementation."""
     from redteam_arena.agents.provider_registry import (
@@ -205,6 +213,8 @@ async def _battle_async(
                     fail_on=fail_on,
                     do_analyze=do_analyze,
                     pr_comment=pr_comment,
+                    agent_mode=agent_mode,
+                    mock_llm=mock_llm,
                 )
         return
 
@@ -223,6 +233,8 @@ async def _battle_async(
         fail_on=fail_on,
         do_analyze=do_analyze,
         pr_comment=pr_comment,
+        agent_mode=agent_mode,
+        mock_llm=mock_llm,
     )
 
 
@@ -242,17 +254,28 @@ async def _run_single_battle(
     fail_on: str | None,
     do_analyze: bool,
     pr_comment: bool,
+    agent_mode: str,
+    mock_llm: bool,
 ) -> None:
     """Run a single battle with all options."""
     from redteam_arena.agents.blue_agent import BlueAgent
     from redteam_arena.agents.provider_registry import create_provider
     from redteam_arena.agents.red_agent import RedAgent
+    from redteam_arena.agents.auditor_agent import AuditorAgent
     from redteam_arena.core.battle_engine import BattleEngine, BattleEngineOptions
     from redteam_arena.core.battle_store import BattleStore
     from redteam_arena.reports.battle_report import generate_report, write_report
 
-    provider = create_provider(provider_id, model=model)  # type: ignore[arg-type]
-    red_agent = RedAgent(provider, model=model)
+    if mock_llm:
+        from redteam_arena.agents.mock_provider import MockProvider
+        provider = MockProvider()  # type: ignore[assignment]
+    else:
+        provider = create_provider(provider_id, model=model)  # type: ignore[arg-type]
+
+    if agent_mode == "auditor":
+        red_agent = AuditorAgent(provider, model=model)
+    else:
+        red_agent = RedAgent(provider, model=model)
     blue_agent = BlueAgent(provider, model=model)
 
     # Handle diff-only mode
@@ -299,6 +322,12 @@ async def _run_single_battle(
     battle_result = await engine.run()
     signal.signal(signal.SIGINT, original_handler)
 
+    if battle_result.status == "error":
+        error_events = [e for e in battle_result.events if e.type == "error"]
+        msg = error_events[0].message if error_events else "Unknown error"
+        from redteam_arena.display import display_error
+        display_error(f"Battle failed: {msg}")
+
     # Collect findings
     all_findings = [f for r in battle_result.rounds for f in r.findings]
     all_mitigations = [m for r in battle_result.rounds for m in r.mitigations]
@@ -323,7 +352,7 @@ async def _run_single_battle(
         display_battle_summary(summary)
 
     # Generate report
-    ext_map = {"markdown": "md", "json": "json", "sarif": "sarif.json", "html": "html"}
+    ext_map = {"markdown": "md", "json": "json", "sarif": "sarif.json", "html": "html", "compliance": "md"}
     extension = ext_map.get(report_format, "md")
 
     if report_format == "sarif":
@@ -335,13 +364,22 @@ async def _run_single_battle(
     elif report_format == "html":
         from redteam_arena.reports.html_reporter import generate_html_report
         report_content = generate_html_report(battle_result)
+    elif report_format == "compliance":
+        from redteam_arena.reports.compliance_reporter import generate_compliance_report
+        report_content = generate_compliance_report(battle_result)
     else:
         from redteam_arena.reports.battle_report import generate_report
         report_content = generate_report(battle_result)
 
-    report_path = await write_report(
-        report_content, battle_result.id, extension=extension, output_path=output_path,
-    )
+    if report_format == "compliance":
+        from redteam_arena.reports.compliance_reporter import write_compliance_report
+        report_path = await write_compliance_report(
+            report_content, battle_result.id, output_path=output_path,
+        )
+    else:
+        report_path = await write_report(
+            report_content, battle_result.id, extension=extension, output_path=output_path,
+        )
     display_report_path(report_path)
 
     # Save to battle store

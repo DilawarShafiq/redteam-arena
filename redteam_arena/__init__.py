@@ -3,7 +3,7 @@ RedTeam Arena -- AI vs AI adversarial security testing.
 Programmatic API entry point.
 """
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 from redteam_arena.agents.agent import Agent
 from redteam_arena.agents.blue_agent import BlueAgent

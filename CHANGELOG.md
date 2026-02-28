@@ -6,6 +6,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.0.2] — 2026-02-28
+
+### Added
+- **Enterprise Auditor Agent** (`--agent-mode auditor`) — A specialized agent for compliance and architectural audits.
+- **Enterprise Compliance Scenarios** — 8 high-end regulatory scenarios including ISO 42001 (AI), SOC 2, FedRAMP, HIPAA/HITECH, HITRUST CSF, EPCS DEA, PCI-DSS, and GDPR/CCPA.
+- **Compliance Reporter** (`--format compliance`) — Generates professional enterprise-grade Markdown reports with SLAs and Risk Postures.
+- **Mock LLM Support** (`--mock-llm`) — For dry runs, CI testing, and fast demonstrations.
+
+---
+
 ## [0.0.1] — 2026-02-27
 
 First public release.
@@ -30,4 +40,5 @@ First public release.
 - **Programmatic Python API** — full import surface for embedding in other tools
 - **Config file support** — `.redteamarena.yml` for per-project settings
 
+[0.0.2]: https://github.com/DilawarShafiq/redteam-arena/releases/tag/v0.0.2
 [0.0.1]: https://github.com/DilawarShafiq/redteam-arena/releases/tag/v0.0.1

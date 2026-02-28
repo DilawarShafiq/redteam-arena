@@ -42,7 +42,7 @@ redteam-arena battle ./my-project --scenario sql-injection
 ### What you'll see
 
 ```
-  REDTEAM ARENA v0.0.1
+  REDTEAM ARENA v0.0.2
   Scenario: sql-injection | Target: ./my-project
   ==================================================
 

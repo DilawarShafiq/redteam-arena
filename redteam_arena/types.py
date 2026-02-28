@@ -21,7 +21,7 @@ Confidence = Literal["high", "medium", "low"]
 
 ProviderId = Literal["claude", "openai", "gemini", "ollama"]
 
-ReportFormat = Literal["markdown", "json", "sarif", "html"]
+ReportFormat = Literal["markdown", "json", "sarif", "html", "compliance"]
 
 # --- Finding ---
 
@@ -98,7 +98,7 @@ class AgentContext:
     previous_findings: list[Finding]
     previous_mitigations: list[Mitigation]
     round_number: int
-    role: Literal["red", "blue"]
+    role: Literal["red", "blue", "auditor"]
 
 
 # --- Stream Options ---
