@@ -1,6 +1,6 @@
 <div align="center">
 
-# RedTeam Arena
+<img src="./logo.svg" alt="RedTeam Arena Logo" width="650" />
 
 **AI vs AI adversarial security testing for your codebase.**
 
