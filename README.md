@@ -2,7 +2,7 @@
 
 <img src="./banner.jpg" alt="RedTeam Arena Banner" width="800" />
 
-**AI vs AI adversarial security testing for your codebase.**
+**Adversarial testing for AI agent systems — complete OWASP Agentic Top 10 (2026) coverage.**
 
 [![PyPI version](https://img.shields.io/pypi/v/redteam-arena.svg)](https://pypi.org/project/redteam-arena/)
 [![Python](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](https://www.python.org/)
@@ -20,12 +20,31 @@ Red team agents attack. Blue team agents defend. Fully automated.
 
 ## Why?
 
-- **Proactive, not reactive** — AI agents that think like attackers probe your code 24/7, instead of waiting for the next CVE.
-- **Attack + defense in one run** — every vulnerability found gets an immediate mitigation proposal, so you ship fixes, not just findings.
-- **Enterprise-grade auditing** — go beyond simple exploits with specialized compliance agents for SOC 2, ISO 27001, HIPAA, FedRAMP, and more.
-- **Zero setup** — point it at a directory, pick a scenario, get a report. No config files, no infrastructure, no learning curve.
-- **Multi-provider** — works with Claude, OpenAI, Gemini, and local Ollama models out of the box.
-- **45+ built-in scenarios** — OWASP Top 10, AI-specific attacks, APT attack chains, and high-end enterprise compliance frameworks.
+- **Complete OWASP Agentic Top 10 (2026) coverage** — a scenario for every risk from ASI01 Agent Goal Hijack through ASI10 Rogue Agents. If you're building with agents, tools, and memory, this is the checklist you're being measured against.
+- **Findings are checked against your source** — every reported location is validated: the file must exist in what was scanned, the line must be in range, and any quoted snippet must actually appear. Unconfirmed findings are labelled, not quietly presented as fact.
+- **Every report states its scope** — you're told how much of your codebase was read, and warned when coverage was partial.
+- **Attack + defense in one run** — each finding gets a proposed mitigation, so you get direction, not just a list.
+- **Any LLM** — Claude, OpenAI, Gemini, or local Ollama. No model is hardcoded; each provider uses its own default, and `--model` overrides it.
+- **45 built-in scenarios** — the Agentic Top 10, OWASP Web, LLM-specific attacks, and compliance-framework gap analysis.
+
+### What this is, and what it isn't
+
+RedTeam Arena reads your source and asks an LLM to reason about it adversarially.
+That makes it a **fast way to generate leads for a human reviewer**. It is not a
+replacement for one.
+
+It does **not** execute code, run exploits, or produce proof-of-concepts, so it
+cannot confirm that anything it reports is genuinely exploitable. Independent
+benchmarks put false-discovery rates for LLM-based code analysis high enough that
+**every finding needs human confirmation before you act on it.** The validation
+pass above exists to make that triage cheaper, not to remove it.
+
+For compliance work specifically: the gap-analysis report is **preparatory input
+for an auditor, never an audit**. SOC 2 is an attestation signed by a licensed CPA
+firm; ISO 27001 is issued by an accredited certification body that is barred from
+having consulted on your ISMS; HITRUST certificates are issued by HITRUST itself
+after its own QA review. No tool — this one included — can produce, replace, or
+shortcut any of that.
 
 ## Quick Start
 
@@ -33,10 +52,14 @@ Red team agents attack. Blue team agents defend. Fully automated.
 # Install
 pip install redteam-arena
 
-# Set your API key (Claude by default)
-export ANTHROPIC_API_KEY=sk-ant-...
+# Set a key for whichever provider you use
+export ANTHROPIC_API_KEY=sk-ant-...    # or OPENAI_API_KEY, or GOOGLE_API_KEY
+# (Ollama needs no key — it runs locally)
 
-# Run a battle
+# Test an agent system against OWASP ASI01
+redteam-arena battle ./my-agent --scenario agent-goal-hijack
+
+# Or point it at ordinary application code
 redteam-arena battle ./my-project --scenario sql-injection
 ```
 
@@ -95,7 +118,10 @@ Run a security battle against a target codebase.
 # 3 rounds of XSS testing
 redteam-arena battle ./webapp --scenario xss --rounds 3
 
-# Full audit (runs all scenarios sequentially)
+# Test an agent system against a specific OWASP ASI risk
+redteam-arena battle ./my-agent --scenario memory-poisoning --rounds 3
+
+# Bundled run (sql-injection, xss, auth-bypass, secrets-exposure)
 redteam-arena battle ./api --scenario full-audit
 
 # CI mode: fail the build on critical findings
@@ -104,13 +130,15 @@ redteam-arena battle ./src --scenario sql-injection --fail-on critical
 # Scan only changed files
 redteam-arena battle ./src --scenario secrets-exposure --diff
 
-# Use OpenAI instead of Claude
+# Any provider. Omit --model to use that provider's default.
 redteam-arena battle ./src --scenario xss --provider openai --model gpt-4o
+redteam-arena battle ./src --scenario xss --provider gemini
+redteam-arena battle ./src --scenario xss --provider ollama    # fully local
 
-# Run a HIPAA/HITECH healthcare compliance audit
+# HIPAA/HITECH control gap analysis (preparatory input, not an audit)
 redteam-arena battle ./medical-app --scenario hipaa-hitech-readiness --agent-mode auditor --format compliance
 
-# SARIF output for GitHub Code Scanning
+# SARIF output
 redteam-arena battle ./src --scenario full-audit --format sarif -o results.sarif.json
 ```
 
@@ -188,54 +216,84 @@ redteam-arena serve --port 3000
 | `vulnerable-dependencies` | Known-vulnerable third-party packages |
 | `sensitive-disclosure` | Excessive error messages and data leakage |
 
-### AI & Agent Safety
+### OWASP Agentic Top 10 (2026) — all 10 covered
+
+The [OWASP Top 10 for Agentic Applications](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/),
+published December 2025, is the reference list for securing systems built from
+agents, tools, and memory. There is a scenario for each risk:
+
+| ID | Scenario | Risk |
+|----|----------|------|
+| ASI01 | `agent-goal-hijack` | Agent Goal Hijack — objectives redirected via injected content |
+| ASI02 | `tool-misuse` | Tool Misuse — unsafe tool invocation in agent chains |
+| ASI03 | `identity-privilege-abuse` | Agent Identity & Privilege Abuse |
+| ASI04 | `agentic-supply-chain` | Agentic Supply Chain Compromise — MCP servers, plugins, registries |
+| ASI05 | `unexpected-code-execution` | Unexpected Code Execution |
+| ASI06 | `memory-poisoning` | Memory & Context Poisoning |
+| ASI07 | `insecure-inter-agent-comms` | Insecure Inter-Agent Communication |
+| ASI08 | `cascading-failures` | Cascading Agent Failures |
+| ASI09 | `human-agent-trust` | Human-Agent Trust Exploitation |
+| ASI10 | `rogue-agents` | Rogue Agents |
+
+`redteam-arena list` prints this coverage so you can verify it against the
+standard yourself.
+
+### Other AI & LLM Security
 
 | Scenario | Description |
 |----------|-------------|
 | `prompt-injection` | Detect prompt injection vulnerabilities in LLM apps |
 | `data-poisoning` | Find training and RAG data poisoning risks |
-| `agent-goal-hijack` | Test agentic systems for goal hijacking |
 | `excessive-agency` | Identify over-privileged AI agents |
 | `system-prompt-leakage` | Find system prompt extraction vectors |
-| `memory-poisoning` | Detect persistent memory corruption attacks |
-| `tool-misuse` | Identify unsafe tool usage in agent chains |
-| `rogue-agents` | Test for unauthorized agent behavior |
 | `llm-misinformation` | Detect hallucination-based security risks |
-| `insecure-inter-agent-comms` | Unsecured agent-to-agent communication |
-| `agentic-supply-chain` | Supply chain risks in agent pipelines |
 | `llm-supply-chain` | Compromised models and unsafe fine-tuning |
-| `human-agent-trust` | Failures in human-AI trust boundaries |
-| `identity-privilege-abuse` | Identity spoofing and privilege escalation in agents |
 | `improper-output-handling` | Unsafe handling of LLM-generated output |
-| `unexpected-code-execution` | Unintended code execution via LLM |
 | `vector-embedding-weakness` | Vulnerabilities in embedding-based retrieval |
-| `cascading-failures` | Failure propagation in multi-agent systems |
+| `unbounded-consumption` | Resource exhaustion and cost-amplification risks |
 
-### Enterprise & Compliance
+### Threat Simulation & Infrastructure
 
 | Scenario | Description |
 |----------|-------------|
-| `apt-advanced-persistent-threat` | Simulates an ALPHV/BlackCat style attack chain (LotL, MFA bypass, lateral movement) |
-| `infrastructure-as-code` | Audits Terraform, Kubernetes, and Docker for cloud misconfigurations |
-| `iso-42001-ai-compliance` | Audit for ISO/IEC 42001 Artificial Intelligence Management System |
-| `soc2-security-privacy` | Audit for SOC 2 Trust Services Criteria (Security, Privacy, Logging) |
-| `fedramp-readiness` | Audit for FedRAMP / NIST 800-53 technical control readiness |
-| `hipaa-hitech-readiness` | US Healthcare compliance audit (ePHI security and audit logs) |
-| `hitrust-csf-compliance` | High-end healthcare framework audit (DLP, device trust) |
-| `epcs-dea-compliance` | DEA regulations for Electronic Prescriptions for Controlled Substances |
-| `pci-dss-readiness` | Payment Card Industry (PCI DSS v4.0) readiness audit |
-| `iso-27001-infosec.md` | Audit for ISO/IEC 27001 Information Security Management System |
-| `cmmc-dod-readiness.md` | Audit for CMMC Level 2 (DoD) security requirements |
-| `gdpr-ccpa-privacy.md` | Audit for global privacy laws (GDPR/CCPA/ISO 27701) |
+| `apt-advanced-persistent-threat` | Reasons about chained attack paths (LotL, MFA bypass, lateral movement) |
+| `infrastructure-as-code` | Reviews Terraform, Kubernetes, and Docker files for misconfigurations |
+
+### Compliance Gap Analysis
+
+> These scenarios produce **preparatory input for a human reviewer or auditor —
+> not an audit, and not certification.** Output is unverified LLM analysis of
+> source code. Certification against any of these frameworks requires an
+> engagement with an accredited third party. See
+> [What this is, and what it isn't](#what-this-is-and-what-it-isnt).
+
+| Scenario | Framework |
+|----------|-----------|
+| `iso-42001-ai-compliance` | ISO/IEC 42001 AI Management System |
+| `soc2-security-privacy` | SOC 2 Trust Services Criteria |
+| `fedramp-readiness` | FedRAMP / NIST 800-53 technical controls |
+| `hipaa-hitech-readiness` | HIPAA/HITECH (ePHI security and audit logs) |
+| `hitrust-csf-compliance` | HITRUST CSF (DLP, device trust) |
+| `epcs-dea-compliance` | DEA EPCS (electronic prescriptions) |
+| `pci-dss-readiness` | PCI DSS v4.0 |
+| `iso-27001-infosec` | ISO/IEC 27001 Information Security Management |
+| `cmmc-dod-readiness` | CMMC Level 2 (DoD) |
+| `gdpr-ccpa-privacy` | GDPR / CCPA / ISO 27701 |
 
 ## How It Works
 
-1. **Read** — RedTeam Arena reads the source files in your target directory.
-2. **Attack** — The Red Agent analyzes the code for vulnerabilities based on the chosen scenario, producing structured findings with severity, file location, and attack vectors.
-3. **Defend** — The Blue Agent reviews each finding and proposes concrete mitigations with code fixes and confidence levels.
-4. **Report** — A report is generated (Markdown, JSON, SARIF, or HTML) with all findings, mitigations, and a severity summary.
+1. **Read** — RedTeam Arena reads the source files in your target directory, up to a fixed context budget. What it read, and anything it skipped, is recorded.
+2. **Attack** — The Red Agent analyzes that source for vulnerabilities based on the chosen scenario, producing structured findings with severity, file location, and attack vectors.
+3. **Validate** — Each finding's reported location is checked against the source actually scanned: the file must exist, the line must be in range, and any quoted snippet must appear in it. Findings that fail are marked, not dropped — a mislocated finding may still describe something real.
+4. **Defend** — The Blue Agent reviews each finding and proposes mitigations with confidence levels.
+5. **Report** — A report is generated (Markdown, JSON, SARIF, or HTML) with findings, mitigations, a severity summary, validation results, and an explicit statement of how much of your codebase was examined.
 
 Each battle runs multiple rounds. In each round, the Red Agent digs deeper based on previous findings, and the Blue Agent refines its defenses.
+
+**Step 3 is the one that matters most.** LLMs reporting vulnerabilities in source
+code produce a high rate of confident, well-written findings that turn out to be
+wrong. Validation cannot tell you whether a described vulnerability is real — only
+whether the location it points at exists. Treat it as triage ordering, not a verdict.
 
 ## Programmatic API
 
@@ -309,6 +367,13 @@ format: markdown         # markdown | json | sarif | html
   with:
     sarif_file: security.sarif.json
 ```
+
+> **Known limitation:** SARIF upload to GitHub code scanning is not yet reliable.
+> Rule IDs are derived from the model's own wording, so they change between runs
+> and GitHub treats each scan as an entirely new set of alerts — dismissals do not
+> persist. Paths are also relative to the scanned directory rather than the repo
+> root, so results can fail to map onto files in the commit. Use `--fail-on` for
+> CI gating today; treat the SARIF upload as experimental. Tracked for a fix.
 
 ## Requirements
 
