@@ -260,18 +260,21 @@ async def _run_single_battle(
     """Run a single battle with all options."""
     from redteam_arena.agents.auditor_agent import AuditorAgent
     from redteam_arena.agents.blue_agent import BlueAgent
+    from redteam_arena.agents.provider import Provider
     from redteam_arena.agents.provider_registry import create_provider
     from redteam_arena.agents.red_agent import RedAgent
     from redteam_arena.core.battle_engine import BattleEngine, BattleEngineOptions
     from redteam_arena.core.battle_store import BattleStore
     from redteam_arena.reports.battle_report import generate_report, write_report
 
+    provider: Provider
     if mock_llm:
         from redteam_arena.agents.mock_provider import MockProvider
-        provider = MockProvider()  # type: ignore[assignment]
+        provider = MockProvider()
     else:
         provider = create_provider(provider_id, model=model)  # type: ignore[arg-type]
 
+    red_agent: RedAgent | AuditorAgent
     if agent_mode == "auditor":
         red_agent = AuditorAgent(provider, model=model)
     else:
