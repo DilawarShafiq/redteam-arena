@@ -8,10 +8,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 
 from redteam_arena import __version__
-from redteam_arena.types import Battle, Finding
+from redteam_arena.types import Battle
 
 SEVERITY_TO_LEVEL: dict[str, str] = {
     "critical": "error",
@@ -29,16 +30,24 @@ SEVERITY_TO_CVSS: dict[str, str] = {
 
 
 def generate_sarif_report(battle: Battle) -> str:
-    """Generate a SARIF 2.1.0 JSON report."""
+    """Generate a SARIF 2.1.0 JSON report.
+
+    Paths are emitted relative to the enclosing git repository root so GitHub
+    code scanning can map results onto files in the commit; rule IDs and
+    fingerprints are derived only from stable inputs so alerts persist across
+    runs instead of being re-created every scan.
+    """
     all_findings = [f for r in battle.rounds for f in r.findings]
     all_mitigations = [m for r in battle.rounds for m in r.mitigations]
+
+    path_prefix = _repo_relative_prefix(battle.config.target_dir)
 
     rules: list[dict] = []
     results: list[dict] = []
     rule_map: dict[str, int] = {}
 
     for finding in all_findings:
-        rule_id = _build_rule_id(finding, battle.config.scenario.name)
+        rule_id = _build_rule_id(battle.config.scenario.name)
 
         if rule_id in rule_map:
             rule_index = rule_map[rule_id]
@@ -50,15 +59,19 @@ def generate_sarif_report(battle: Battle) -> str:
                 (m for m in all_mitigations if m.finding_id == finding.id), None
             )
 
+            scenario_name = battle.config.scenario.name
             rules.append({
                 "id": rule_id,
-                "name": rule_id,
+                "name": _rule_name(scenario_name),
                 "shortDescription": {
-                    "text": _truncate(finding.description, 1024),
+                    "text": _truncate(
+                        battle.config.scenario.description or scenario_name, 1024
+                    ),
                 },
                 "fullDescription": {
                     "text": _truncate(
-                        f"{finding.description}\n\nAttack vector: {finding.attack_vector}",
+                        f"Findings from the '{scenario_name}' scenario. "
+                        "Each result describes a specific reported issue.",
                         1024,
                     ),
                 },
@@ -86,6 +99,7 @@ def generate_sarif_report(battle: Battle) -> str:
             })
 
         line_number = _parse_line_number(finding.line_reference)
+        uri = _repo_relative_uri(path_prefix, finding.file_path)
 
         results.append({
             "ruleId": rule_id,
@@ -98,8 +112,7 @@ def generate_sarif_report(battle: Battle) -> str:
                 {
                     "physicalLocation": {
                         "artifactLocation": {
-                            "uri": _normalize_file_path(finding.file_path),
-                            "uriBaseId": "%SRCROOT%",
+                            "uri": uri,
                         },
                         "region": {
                             "startLine": line_number,
@@ -108,11 +121,11 @@ def generate_sarif_report(battle: Battle) -> str:
                     },
                 },
             ],
+            # Location-based only. The description is LLM prose that differs
+            # between runs; including it made every scan look like new alerts.
             "partialFingerprints": {
                 "primaryLocationLineHash": _hash_fingerprint(
-                    finding.file_path,
-                    finding.line_reference,
-                    finding.description,
+                    uri, rule_id, str(line_number)
                 ),
             },
         })
@@ -199,13 +212,20 @@ def generate_json_report(battle: Battle) -> str:
     return json.dumps(report, indent=2)
 
 
-def _build_rule_id(finding: Finding, scenario: str) -> str:
-    prefix = "RT"
-    slug = scenario.replace("-", "")[:4].upper()
-    hash_val = hashlib.md5(
-        finding.description[:50].encode()
-    ).hexdigest()[:4].upper()
-    return f"{prefix}-{slug}-{hash_val}"
+def _build_rule_id(scenario: str) -> str:
+    """A stable rule id per scenario.
+
+    A SARIF rule is a reusable category, not one finding. Deriving the id from
+    the scenario alone keeps it identical across runs; the previous MD5 of the
+    finding's prose changed whenever the model reworded itself, so GitHub saw a
+    brand-new rule -- and brand-new alerts -- every scan.
+    """
+    return f"redteam-arena/{scenario}"
+
+
+def _rule_name(scenario: str) -> str:
+    """PascalCase rule name, e.g. sql-injection -> SqlInjection."""
+    return "".join(part.capitalize() for part in re.split(r"[-_]", scenario) if part)
 
 
 def _parse_line_number(line_ref: str) -> int:
@@ -214,7 +234,39 @@ def _parse_line_number(line_ref: str) -> int:
 
 
 def _normalize_file_path(file_path: str) -> str:
-    return file_path.replace("\\", "/")
+    return file_path.replace("\\", "/").lstrip("/")
+
+
+def _repo_relative_prefix(target_dir: str) -> str:
+    """Path from the enclosing git repo root down to the scanned directory.
+
+    GitHub code scanning resolves result URIs against the repository root, but
+    findings carry paths relative to the scanned directory. When the scan
+    target sits inside a git repo, prepend the offset so `battle ./src` yields
+    `src/...`. Pure filesystem walk -- no git subprocess. Empty string when the
+    target is the repo root or not in a repo.
+    """
+    try:
+        current = os.path.abspath(target_dir)
+    except (OSError, ValueError):
+        return ""
+    walked = current
+    while True:
+        if os.path.isdir(os.path.join(walked, ".git")):
+            rel = os.path.relpath(current, walked)
+            return "" if rel == "." else _normalize_file_path(rel)
+        parent = os.path.dirname(walked)
+        if parent == walked:  # reached filesystem root
+            return ""
+        walked = parent
+
+
+def _repo_relative_uri(prefix: str, file_path: str) -> str:
+    """Join the repo-root prefix with a finding's path, as a POSIX URI."""
+    normalized = _normalize_file_path(file_path)
+    if prefix:
+        return f"{prefix}/{normalized}"
+    return normalized
 
 
 def _hash_fingerprint(*parts: str) -> str:

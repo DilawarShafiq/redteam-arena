@@ -369,12 +369,11 @@ format: markdown         # markdown | json | sarif | html
     sarif_file: security.sarif.json
 ```
 
-> **Known limitation:** SARIF upload to GitHub code scanning is not yet reliable.
-> Rule IDs are derived from the model's own wording, so they change between runs
-> and GitHub treats each scan as an entirely new set of alerts — dismissals do not
-> persist. Paths are also relative to the scanned directory rather than the repo
-> root, so results can fail to map onto files in the commit. Use `--fail-on` for
-> CI gating today; treat the SARIF upload as experimental. Tracked for a fix.
+> **Note on stability:** Rule IDs and result fingerprints are derived only from
+> the scenario and the reported location, not the model's wording, so alerts
+> persist across runs and dismissals stick. Paths are resolved relative to the
+> enclosing git repository root. Line numbers are still model-reported and may be
+> approximate, so an alert can land a few lines off — validate before acting.
 
 ## Requirements
 
