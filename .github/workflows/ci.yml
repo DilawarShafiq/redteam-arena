@@ -45,6 +45,12 @@ jobs:
     needs: test
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
 
+    # Trusted Publishing (OIDC). GitHub mints a short-lived identity token that
+    # PyPI verifies against the publisher configured on the project, so there is
+    # no long-lived API token to store, leak, or rotate.
+    permissions:
+      id-token: write
+
     steps:
       - uses: actions/checkout@v6
 
@@ -54,13 +60,10 @@ jobs:
           python-version: "3.12"
 
       - name: Install build tools
-        run: pip install build twine
+        run: pip install build
 
       - name: Build package
         run: python -m build
 
       - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-        run: twine upload dist/*
+        uses: pypa/gh-action-pypi-publish@release/v1
