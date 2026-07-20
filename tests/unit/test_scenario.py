@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from redteam_arena.scenarios.scenario import load_scenario, list_scenarios
+from redteam_arena.scenarios.scenario import list_scenarios, load_scenario
 
 
 class TestLoadScenario:

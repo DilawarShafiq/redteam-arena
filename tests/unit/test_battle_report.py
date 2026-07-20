@@ -5,8 +5,6 @@ from __future__ import annotations
 import re
 from datetime import datetime
 
-import pytest
-
 from redteam_arena.reports.battle_report import generate_report
 from redteam_arena.types import (
     Battle,
@@ -16,7 +14,6 @@ from redteam_arena.types import (
     Round,
     Scenario,
 )
-
 
 # --- Helpers ---
 

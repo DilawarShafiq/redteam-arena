@@ -47,3 +47,4 @@ coverage/
 # Node (legacy, can be removed after full migration)
 node_modules/
 *.tsbuildinfo
+linkedin_post.txt

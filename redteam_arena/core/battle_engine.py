@@ -40,6 +40,7 @@ from redteam_arena.types import (
     Round,
     RoundEndEvent,
     RoundStartEvent,
+    ScanScope,
 )
 
 
@@ -87,13 +88,16 @@ class BattleEngine:
     async def run(self) -> Battle:
         """Run the full battle loop."""
         # Use override_files (e.g. from --diff) or read codebase
+        scope = ScanScope()
         if self._override_files is not None:
             files = self._override_files
+            scope.files_read = len(files)
         else:
-            code_result = await read_codebase(self._config.target_dir)
+            code_result = await read_codebase(self._config.target_dir, scope=scope)
             if not code_result.ok:
                 raise RuntimeError(code_result.error.args[0] if code_result.error.args else str(code_result.error))
             files = code_result.value
+        self._battle.scan_scope = scope
 
         if not has_source_files(files):
             raise RuntimeError(f"No source files found in {self._config.target_dir}")

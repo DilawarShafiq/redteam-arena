@@ -88,6 +88,32 @@ class FileEntry:
     content: str
 
 
+@dataclass
+class ScanScope:
+    """What the reader actually looked at, so reports can disclose coverage.
+
+    The reader works to a fixed context budget and stops once it is exhausted,
+    so a scan is frequently partial. Without this, a report over 2% of a
+    codebase is indistinguishable from one over all of it.
+    """
+
+    files_read: int = 0
+    bytes_read: int = 0
+    max_total_size: int = 0
+    budget_exhausted: bool = False
+    skipped_too_large: list[str] = field(default_factory=list)
+    skipped_over_budget: list[str] = field(default_factory=list)
+
+    @property
+    def skipped_count(self) -> int:
+        return len(self.skipped_too_large) + len(self.skipped_over_budget)
+
+    @property
+    def is_partial(self) -> bool:
+        """True when the reader did not see the whole target."""
+        return self.budget_exhausted or self.skipped_count > 0
+
+
 # --- Agent Context ---
 
 
@@ -234,6 +260,7 @@ class Battle:
     status: BattleStatus
     started_at: datetime
     ended_at: datetime | None = None
+    scan_scope: ScanScope | None = None
 
 
 # --- Result type for error handling ---

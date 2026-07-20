@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from datetime import datetime
 
-import pytest
-
 from redteam_arena.core.event_system import BattleEventSystem
 from redteam_arena.types import (
     AttackEvent,

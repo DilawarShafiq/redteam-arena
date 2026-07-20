@@ -14,7 +14,6 @@ from redteam_arena.agents.agent import Agent
 from redteam_arena.core.battle_engine import BattleEngine, BattleEngineOptions
 from redteam_arena.types import AgentContext, BattleConfig, Scenario
 
-
 # Mock agent that returns predictable output
 
 
