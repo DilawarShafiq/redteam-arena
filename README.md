@@ -109,7 +109,8 @@ Run a security battle against a target codebase.
 | `--agent-mode <mode>` | Agent focus: `attacker` (default) or `auditor` | `attacker` |
 | `--mock-llm` | Use a mock LLM for testing/demo (fast & free) | `false` |
 | `--diff` | Only scan changed files (git diff) | `false` |
-| `--auto-fix` | Generate fix suggestions as a branch | `false` |
+| `--auto-fix` | Write fix proposals as markdown files (does **not** edit source) | `false` |
+| `--auto-fix-branch` | Also commit each proposal to its own git branch | `false` |
 | `--fail-on <sev>` | Exit non-zero if severity found: `critical`, `high`, `medium`, `low` | — |
 | `--analyze` | Run advanced cross-cutting analysis | `false` |
 | `--pr-comment` | Post results as a GitHub PR comment | `false` |

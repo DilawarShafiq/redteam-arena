@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [Unreleased]
+
+### Fixed
+- **`--auto-fix` no longer modifies your repository by default, and its git handling is safe.** It advertised "applies Blue Agent mitigations directly" but never edited source — it wrote markdown proposals, created a branch per finding, and left the repo checked out on the last one. Worse, no git command's exit code was checked, so a failed `checkout -b` did not stop the run and the following commit could land on the current branch (e.g. `main`). Now: writing proposals is the default and touches no git state; committing to per-finding branches is opt-in via `--auto-fix-branch`; every git call is checked; the original branch is always restored; and it refuses to run on a dirty tree or a non-repo. The flag and report wording no longer claim fixes were applied. Adds 12 tests to a module that previously had none.
+
 ## [0.0.5] — 2026-07-21
 
 A correctness release. No new scenarios or features: everything here either

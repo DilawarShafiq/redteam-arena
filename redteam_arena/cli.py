@@ -63,8 +63,9 @@ def cli() -> None:
 @click.option("-o", "--output", default=None, help="Output file path")
 @click.option("--diff/--no-diff", default=False, help="Only scan changed files (git diff)")
 @click.option("--diff-base", default="HEAD~1", show_default=True, help="Git ref for diff base")
-@click.option("--auto-fix/--no-auto-fix", default=False, help="Generate fix branches")
-@click.option("--auto-fix-dry-run", is_flag=True, default=False, help="Preview fixes without applying")
+@click.option("--auto-fix/--no-auto-fix", default=False, help="Write fix proposals as files (does not modify source)")
+@click.option("--auto-fix-branch", is_flag=True, default=False, help="Also commit each proposal to its own git branch")
+@click.option("--auto-fix-dry-run", is_flag=True, default=False, help="Preview proposals without writing them")
 @click.option("--fail-on", default=None, type=click.Choice(["critical", "high", "medium", "low"]), help="Exit non-zero if severity found")
 @click.option("--analyze/--no-analyze", default=False, help="Run advanced analysis")
 @click.option("--tag", multiple=True, help="Filter scenarios by tag")
@@ -84,6 +85,7 @@ def battle(
     diff: bool,
     diff_base: str,
     auto_fix: bool,
+    auto_fix_branch: bool,
     auto_fix_dry_run: bool,
     fail_on: str | None,
     analyze: bool,
@@ -108,6 +110,7 @@ def battle(
                 diff_only=diff,
                 diff_base=diff_base,
                 auto_fix=auto_fix,
+                auto_fix_branch=auto_fix_branch,
                 auto_fix_dry_run=auto_fix_dry_run,
                 fail_on=fail_on,
                 do_analyze=analyze,
@@ -138,6 +141,7 @@ async def _battle_async(
     diff_only: bool,
     diff_base: str,
     auto_fix: bool,
+    auto_fix_branch: bool,
     auto_fix_dry_run: bool,
     fail_on: str | None,
     do_analyze: bool,
@@ -210,6 +214,7 @@ async def _battle_async(
                     diff_only=diff_only,
                     diff_base=diff_base,
                     auto_fix=auto_fix,
+                    auto_fix_branch=auto_fix_branch,
                     auto_fix_dry_run=auto_fix_dry_run,
                     fail_on=fail_on,
                     do_analyze=do_analyze,
@@ -230,6 +235,7 @@ async def _battle_async(
         diff_only=diff_only,
         diff_base=diff_base,
         auto_fix=auto_fix,
+        auto_fix_branch=auto_fix_branch,
         auto_fix_dry_run=auto_fix_dry_run,
         fail_on=fail_on,
         do_analyze=do_analyze,
@@ -251,6 +257,7 @@ async def _run_single_battle(
     diff_only: bool,
     diff_base: str,
     auto_fix: bool,
+    auto_fix_branch: bool,
     auto_fix_dry_run: bool,
     fail_on: str | None,
     do_analyze: bool,
@@ -409,10 +416,15 @@ async def _run_single_battle(
     if (auto_fix or auto_fix_dry_run) and all_findings:
         from redteam_arena.core.auto_fix import format_auto_fix_summary, run_auto_fix
         fix_result = await run_auto_fix(
-            target_dir, battle_result, dry_run=auto_fix_dry_run,
+            target_dir,
+            battle_result,
+            create_branch=auto_fix_branch,
+            dry_run=auto_fix_dry_run,
         )
         if fix_result.ok:
             click.echo(format_auto_fix_summary(fix_result.value))
+        else:
+            display_error(str(fix_result.error))
 
     # PR comment
     if pr_comment:
