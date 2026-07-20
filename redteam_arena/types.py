@@ -86,6 +86,8 @@ class Scenario:
     tags: list[str] = field(default_factory=list)
     is_meta: bool = False
     sub_scenarios: list[str] = field(default_factory=list)
+    # e.g. "ASI01" -- OWASP Top 10 for Agentic Applications 2026.
+    owasp_asi: str = ""
 
 
 # --- File Entry ---

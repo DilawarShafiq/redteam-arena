@@ -1,6 +1,7 @@
 ---
 name: unexpected-code-execution
 description: Detect unsafe code generation and execution by autonomous agents
+owasp_asi: ASI05  # OWASP Top 10 for Agentic Applications 2026 - Unexpected Code Execution
 tags:
   - owasp-agentic-2026
   - security

@@ -1,6 +1,7 @@
 ---
 name: memory-poisoning
 description: Detect persistent memory corruption and cross-session attack vectors in agents
+owasp_asi: ASI06  # OWASP Top 10 for Agentic Applications 2026 - Memory & Context Poisoning
 tags:
   - owasp-agentic-2026
   - security

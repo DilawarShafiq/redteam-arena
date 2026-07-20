@@ -449,10 +449,18 @@ async def _list_async(tags: list[str], exclude_tags: list[str], scenario_dir: st
 
     click.echo("\nAvailable Scenarios:\n")
     for s in scenarios:
-        name = s.name.ljust(30)
+        name = s.name.ljust(32)
+        asi = f"{s.owasp_asi}  " if s.owasp_asi else "       "
         tag_str = f" [{', '.join(s.tags)}]" if s.tags else ""
-        click.echo(f"  {name}{s.description}{tag_str}")
+        click.echo(f"  {asi}{name}{s.description}{tag_str}")
+
+    covered = sorted({s.owasp_asi for s in scenarios if s.owasp_asi})
     click.echo(f"\n  {len(scenarios)} scenario(s) available.")
+    if covered:
+        click.echo(
+            f"  OWASP Top 10 for Agentic Applications 2026: {len(covered)}/10 covered "
+            f"({', '.join(covered)})"
+        )
     click.echo("  Usage: redteam-arena battle <directory> --scenario <name>\n")
 
 

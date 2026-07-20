@@ -6,6 +6,26 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [Unreleased]
+
+### Fixed
+- **`--model` was silently ignored** — the Red and Blue agents hardcoded a Claude model into their request options and discarded the value passed from the CLI. Because the OpenAI adapter falls back to that value, the Claude model string was sent verbatim to OpenAI, Gemini and Ollama, which reject it. Three of the four advertised providers were non-functional for battles.
+- **`Dockerfile` and `.env` files were never read** — `os.path.splitext` returns an empty extension for extensionless names and bare dotfiles, so neither could match the extension allowlist. The secrets-exposure scenario could not see `.env` files at all. Matching is now by filename as well as extension, including suffixed variants such as `Dockerfile.prod`.
+- **CI was red on `main`**, which blocked the `publish` job (`needs: test`) and therefore all releases: a `ruff` import-order error introduced in 0.0.4, a version assertion pinned to `0.0.1` against a `0.0.4` package, and two `mypy` assignment errors in `cli.py`.
+- SARIF reports declared a hardcoded `semanticVersion` of `0.1.0` regardless of the installed version.
+
+### Added
+- **Finding location validation** — every model-reported finding is now checked against the source that was actually scanned: the path must resolve to a scanned file, the line must fall within it, and any quoted snippet must appear in it. Results are recorded on `Finding.verification` as `verified`, `unverified`, `not_in_scope` or `unchecked`. Findings are annotated rather than dropped, since a mislocated finding may still describe a real issue.
+- **Scan scope disclosure** — the reader stops at a fixed context budget, so scans are frequently partial. `ScanScope` now records files read, bytes read, budget exhaustion and skipped files, and reports render it with an explicit warning when coverage is incomplete.
+- **OWASP Agentic Top 10 (2026) mapping** — the ten agentic scenarios declare their `owasp_asi` ID, and `redteam list` reports coverage against the standard.
+
+### Changed
+- **The compliance report no longer presents itself as an audit.** It was titled "ENTERPRISE COMPLIANCE AUDIT REPORT / Independent Cybersecurity & Compliance Assessment", carried report IDs and remediation SLAs, and printed "no significant control gaps were identified" when the model may never have read the code. SOC 2 (SSAE 18 / AT-C 205), ISO 27001 (ISO/IEC 17021-1) and HITRUST all reserve issuance for accredited third parties. It is now "Control Gap Analysis — Automated Pre-Audit Input, Unverified", carries a disclaimer naming that requirement, frames SLAs as suggested triage priorities, and treats an empty run as inconclusive rather than as a pass.
+- CI lints `tests/` in addition to the package.
+- Dependabot updates are grouped per ecosystem and run monthly rather than weekly.
+
+---
+
 ## [0.0.4] — 2026-02-28
 
 ### Added
@@ -18,11 +38,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [0.0.3] — 2026-02-28
 
+### Changed
+- Documentation only — README updated to describe the enterprise and healthcare capabilities introduced in 0.0.2. No code changes.
+
+---
+
+## [0.0.2] — 2026-02-28
+
 ### Added
 - **Enterprise Auditor Agent** (`--agent-mode auditor`) — A specialized agent for compliance and architectural audits.
 - **Enterprise Compliance Scenarios** — 8 high-end regulatory scenarios including ISO 42001 (AI), SOC 2, FedRAMP, HIPAA/HITECH, HITRUST CSF, EPCS DEA, PCI-DSS, and GDPR/CCPA.
-- **Compliance Reporter** (`--format compliance`) — Generates professional enterprise-grade Markdown reports with SLAs and Risk Postures.
+- **Compliance Reporter** (`--format compliance`) — Generates Markdown reports grouped by severity. (Retitled in a later release; see Unreleased.)
 - **Mock LLM Support** (`--mock-llm`) — For dry runs, CI testing, and fast demonstrations.
+
+### Fixed
+- Resolved 25 mypy type errors and remaining CI blockers ahead of public launch.
+- `.claude/settings.local.json` is gitignored to prevent API key exposure.
 
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: tool-misuse
 description: Detect agent tool exploitation, recursive loops, and unsafe tool composition
+owasp_asi: ASI02  # OWASP Top 10 for Agentic Applications 2026 - Tool Misuse
 tags:
   - owasp-agentic-2026
   - security

@@ -10,6 +10,7 @@ import hashlib
 import json
 import re
 
+from redteam_arena import __version__
 from redteam_arena.types import Battle, Finding
 
 SEVERITY_TO_LEVEL: dict[str, str] = {
@@ -124,7 +125,7 @@ def generate_sarif_report(battle: Battle) -> str:
                 "tool": {
                     "driver": {
                         "name": "redteam-arena",
-                        "semanticVersion": "0.1.0",
+                        "semanticVersion": __version__,
                         "informationUri": "https://github.com/DilawarShafiq/redteam-arena",
                         "rules": rules,
                     },
