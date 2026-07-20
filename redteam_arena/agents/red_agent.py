@@ -54,7 +54,7 @@ class RedAgent(Agent):
         async for chunk in self._provider.stream(
             messages,
             StreamOptions(
-                model="claude-sonnet-4-20250514",
+                model=self._model or "claude-sonnet-4-20250514",
                 max_tokens=4096,
                 system_prompt=system_prompt,
             ),
