@@ -25,6 +25,13 @@ ReportFormat = Literal["markdown", "json", "sarif", "html", "compliance"]
 
 # --- Finding ---
 
+# How a finding's reported location held up against the file it names.
+#   verified        - path exists, line is in range, and any snippet was found
+#   unverified      - the claim did not hold up; see verification_detail
+#   not_in_scope    - the named file was never read, so nothing can be said
+#   unchecked       - validation has not run
+Verification = Literal["verified", "unverified", "not_in_scope", "unchecked"]
+
 
 @dataclass
 class Finding:
@@ -36,6 +43,8 @@ class Finding:
     attack_vector: str
     severity: Severity
     code_snippet: str | None = None
+    verification: Verification = "unchecked"
+    verification_detail: str = ""
 
 
 # --- Mitigation ---

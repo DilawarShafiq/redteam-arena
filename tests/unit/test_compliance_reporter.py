@@ -139,9 +139,11 @@ class TestScopeDisclosure:
 
 
 class TestFindingsRendering:
-    def test_locations_are_marked_as_model_reported(self) -> None:
+    def test_locations_carry_a_verification_result(self) -> None:
         report = generate_compliance_report(make_battle([make_finding()]))
-        assert "model-reported" in report.lower()
+        assert "**Location check:**" in report
+        # Findings built without a validation pass must not read as confirmed.
+        assert "Not validated" in report
 
     def test_renders_finding_content(self) -> None:
         report = generate_compliance_report(make_battle([make_finding()]))

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 
+from redteam_arena.core.finding_validator import verification_counts
 from redteam_arena.reports.scope_notice import format_scan_scope
 from redteam_arena.types import Battle, Finding, Mitigation
 
@@ -22,6 +23,45 @@ _DISCLAIMER = """> ⚠️ **This is not an audit, certification, or independent 
 > accredited certification body, or an approved external assessor. No software can
 > produce, replace, or substitute for that engagement. Use this document only as
 > preparatory input for qualified human reviewers."""
+
+
+_VERIFICATION_LABELS = {
+    "verified": "Location confirmed in a scanned file",
+    "unverified": "Location did not check out",
+    "not_in_scope": "Named a file that was never scanned",
+    "unchecked": "Not validated",
+}
+
+
+def _format_verification_summary(findings: list[Finding]) -> list[str]:
+    """Render how many reported locations survived validation."""
+    if not findings:
+        return []
+
+    counts = verification_counts(findings)
+    lines = ["### Location Verification", ""]
+    lines.append(
+        "Each candidate's reported file and line were checked against the source "
+        "actually scanned. This checks that the location is real -- it does not "
+        "confirm that the described gap exists."
+    )
+    lines.append("")
+    lines.append("| Result | Count |")
+    lines.append("|--------|-------|")
+    for status, label in _VERIFICATION_LABELS.items():
+        if counts.get(status):
+            lines.append(f"| {label} | {counts[status]} |")
+    lines.append("")
+
+    suspect = counts.get("unverified", 0) + counts.get("not_in_scope", 0)
+    if suspect:
+        lines.append(
+            f"> ⚠️ **{suspect} of {len(findings)} candidates point at a location that could not "
+            "be confirmed.** These are the most likely to be model fabrications and should be "
+            "checked first, or discarded."
+        )
+        lines.append("")
+    return lines
 
 
 def generate_compliance_report(battle: Battle) -> str:
@@ -59,6 +99,7 @@ def generate_compliance_report(battle: Battle) -> str:
     total = len(all_findings)
     lines.append(f"**Potential control gaps suggested:** {total}")
     lines.append("")
+    lines.extend(_format_verification_summary(all_findings))
     lines.extend(format_scan_scope(battle.scan_scope))
 
     by_severity: dict[str, int] = {"critical": 0, "high": 0, "medium": 0, "low": 0}
@@ -99,8 +140,11 @@ def generate_compliance_report(battle: Battle) -> str:
 
             lines.append(f"### Candidate {i + 1}: {finding.description}")
             lines.append(f"**Model-assigned severity:** {finding.severity.upper()}")
-            lines.append(f"**Reported location:** `{finding.file_path}:{finding.line_reference}` "
-                         "(model-reported — confirm before relying on it)")
+            lines.append(f"**Reported location:** `{finding.file_path}:{finding.line_reference}`")
+            label = _VERIFICATION_LABELS.get(finding.verification, "Not validated")
+            marker = "✅" if finding.verification == "verified" else "⚠️"
+            detail = f" — {finding.verification_detail}" if finding.verification_detail else ""
+            lines.append(f"**Location check:** {marker} {label}{detail}")
             lines.append(f"**Control Impact / Attack Vector:** {finding.attack_vector}")
             lines.append("")
 
