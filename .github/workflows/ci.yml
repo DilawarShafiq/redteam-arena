@@ -3,6 +3,10 @@ name: CI
 on:
   push:
     branches: [main]
+    # Required for the publish job. Without this the workflow never runs on a
+    # tag, so its `startsWith(github.ref, 'refs/tags/v')` guard can never be
+    # true and releases silently do not happen.
+    tags: ['v*']
   pull_request:
     branches: [main]
 
