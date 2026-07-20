@@ -258,10 +258,10 @@ async def _run_single_battle(
     mock_llm: bool,
 ) -> None:
     """Run a single battle with all options."""
+    from redteam_arena.agents.auditor_agent import AuditorAgent
     from redteam_arena.agents.blue_agent import BlueAgent
     from redteam_arena.agents.provider_registry import create_provider
     from redteam_arena.agents.red_agent import RedAgent
-    from redteam_arena.agents.auditor_agent import AuditorAgent
     from redteam_arena.core.battle_engine import BattleEngine, BattleEngineOptions
     from redteam_arena.core.battle_store import BattleStore
     from redteam_arena.reports.battle_report import generate_report, write_report

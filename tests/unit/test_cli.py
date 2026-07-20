@@ -8,6 +8,7 @@ from __future__ import annotations
 import pytest
 from click.testing import CliRunner
 
+from redteam_arena import __version__
 from redteam_arena.cli import cli
 
 
@@ -20,7 +21,7 @@ class TestVersion:
     def test_version_flag(self, runner: CliRunner) -> None:
         result = runner.invoke(cli, ["--version"])
         assert result.exit_code == 0
-        assert "0.0.1" in result.output
+        assert __version__ in result.output
 
 
 class TestHelp:
