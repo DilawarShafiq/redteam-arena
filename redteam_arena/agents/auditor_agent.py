@@ -61,7 +61,9 @@ class AuditorAgent(Agent):
         async for chunk in self._provider.stream(
             messages,
             StreamOptions(
-                model=self._model or "claude-3-7-sonnet-20250219",
+                # Empty means "let the provider pick its own default" -- naming a
+                # model here would send it to whichever provider is configured.
+                model=self._model,
                 max_tokens=4096,
                 system_prompt=system_prompt,
             ),

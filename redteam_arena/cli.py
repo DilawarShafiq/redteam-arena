@@ -13,6 +13,7 @@ import sys
 
 import click
 
+from redteam_arena import __version__
 from redteam_arena.display import (
     display_battle_header,
     display_battle_summary,
@@ -44,7 +45,7 @@ def _should_fail(findings: list, fail_on: str | None) -> bool:
 
 
 @click.group()
-@click.version_option("0.0.4", prog_name="redteam-arena")
+@click.version_option(__version__, prog_name="redteam-arena")
 def cli() -> None:
     """AI vs AI adversarial security testing. Red team attacks, blue team defends."""
 

@@ -6,10 +6,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [Unreleased]
+## [0.0.5] — 2026-07-21
+
+A correctness release. No new scenarios or features: everything here either
+fixes something that was broken or removes a claim the tool could not support.
 
 ### Fixed
-- **`--model` was silently ignored** — the Red and Blue agents hardcoded a Claude model into their request options and discarded the value passed from the CLI. Because the OpenAI adapter falls back to that value, the Claude model string was sent verbatim to OpenAI, Gemini and Ollama, which reject it. Three of the four advertised providers were non-functional for battles.
+- **The agents are no longer tied to Claude.** The Red, Blue and Auditor agents each named a Claude model in their request options, which overrode whatever provider the user selected — so `--provider openai` sent a Claude model string to OpenAI, and `--model` was discarded entirely. Three of the four advertised providers were non-functional for battles. Agents now send no model at all, leaving each adapter to apply its own default (`gpt-4o`, `gemini-2.0-flash`, `llama3.2`, `claude-sonnet-4`), and forwarding `--model` verbatim when given. The Auditor agent additionally defaulted to a superseded Claude 3.7 model.
+- `redteam --version` reported a hardcoded `0.0.4` from a third copy of the version string in `cli.py`; it now tracks `__version__`.
 - **`Dockerfile` and `.env` files were never read** — `os.path.splitext` returns an empty extension for extensionless names and bare dotfiles, so neither could match the extension allowlist. The secrets-exposure scenario could not see `.env` files at all. Matching is now by filename as well as extension, including suffixed variants such as `Dockerfile.prod`.
 - **CI was red on `main`**, which blocked the `publish` job (`needs: test`) and therefore all releases: a `ruff` import-order error introduced in 0.0.4, a version assertion pinned to `0.0.1` against a `0.0.4` package, and two `mypy` assignment errors in `cli.py`.
 - SARIF reports declared a hardcoded `semanticVersion` of `0.1.0` regardless of the installed version.
