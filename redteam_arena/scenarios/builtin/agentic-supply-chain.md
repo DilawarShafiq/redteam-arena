@@ -1,6 +1,7 @@
 ---
 name: agentic-supply-chain
 description: Detect compromised MCP servers, malicious plugins, and agent registry poisoning
+owasp_asi: ASI04  # OWASP Top 10 for Agentic Applications 2026 - Agentic Supply Chain Compromise
 tags:
   - owasp-agentic-2026
   - security

@@ -13,6 +13,7 @@ from redteam_arena.agents.agent import Agent
 from redteam_arena.agents.response_parser import parse_findings, parse_mitigations
 from redteam_arena.core.event_system import BattleEventSystem
 from redteam_arena.core.file_reader import has_source_files, read_codebase
+from redteam_arena.core.finding_validator import validate_findings
 from redteam_arena.display import (
     display_agent_done,
     display_blue_chunk,
@@ -40,6 +41,7 @@ from redteam_arena.types import (
     Round,
     RoundEndEvent,
     RoundStartEvent,
+    ScanScope,
 )
 
 
@@ -87,13 +89,16 @@ class BattleEngine:
     async def run(self) -> Battle:
         """Run the full battle loop."""
         # Use override_files (e.g. from --diff) or read codebase
+        scope = ScanScope()
         if self._override_files is not None:
             files = self._override_files
+            scope.files_read = len(files)
         else:
-            code_result = await read_codebase(self._config.target_dir)
+            code_result = await read_codebase(self._config.target_dir, scope=scope)
             if not code_result.ok:
                 raise RuntimeError(code_result.error.args[0] if code_result.error.args else str(code_result.error))
             files = code_result.value
+        self._battle.scan_scope = scope
 
         if not has_source_files(files):
             raise RuntimeError(f"No source files found in {self._config.target_dir}")
@@ -185,9 +190,11 @@ class BattleEngine:
             display_red_chunk(chunk)
         display_agent_done()
 
-        # Parse findings
+        # Parse findings, then check each reported location against the files the
+        # agent was actually shown. Unverified findings are kept but marked.
         findings_result = parse_findings(red_output, round_number)
         findings = findings_result.value if findings_result.ok else []
+        validate_findings(findings, files)
 
         # Display structured findings
         for finding in findings:

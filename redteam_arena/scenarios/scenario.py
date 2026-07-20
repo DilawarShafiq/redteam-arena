@@ -97,6 +97,7 @@ async def load_scenario(name: str, *, scenario_dir: str = "") -> Result[Scenario
             tags=frontmatter.get("tags", []),
             is_meta=frontmatter.get("is_meta", False),
             sub_scenarios=frontmatter.get("sub_scenarios", []),
+            owasp_asi=frontmatter.get("owasp_asi", ""),
         )
     )
 

@@ -25,6 +25,13 @@ ReportFormat = Literal["markdown", "json", "sarif", "html", "compliance"]
 
 # --- Finding ---
 
+# How a finding's reported location held up against the file it names.
+#   verified        - path exists, line is in range, and any snippet was found
+#   unverified      - the claim did not hold up; see verification_detail
+#   not_in_scope    - the named file was never read, so nothing can be said
+#   unchecked       - validation has not run
+Verification = Literal["verified", "unverified", "not_in_scope", "unchecked"]
+
 
 @dataclass
 class Finding:
@@ -36,6 +43,8 @@ class Finding:
     attack_vector: str
     severity: Severity
     code_snippet: str | None = None
+    verification: Verification = "unchecked"
+    verification_detail: str = ""
 
 
 # --- Mitigation ---
@@ -77,6 +86,8 @@ class Scenario:
     tags: list[str] = field(default_factory=list)
     is_meta: bool = False
     sub_scenarios: list[str] = field(default_factory=list)
+    # e.g. "ASI01" -- OWASP Top 10 for Agentic Applications 2026.
+    owasp_asi: str = ""
 
 
 # --- File Entry ---
@@ -86,6 +97,32 @@ class Scenario:
 class FileEntry:
     path: str
     content: str
+
+
+@dataclass
+class ScanScope:
+    """What the reader actually looked at, so reports can disclose coverage.
+
+    The reader works to a fixed context budget and stops once it is exhausted,
+    so a scan is frequently partial. Without this, a report over 2% of a
+    codebase is indistinguishable from one over all of it.
+    """
+
+    files_read: int = 0
+    bytes_read: int = 0
+    max_total_size: int = 0
+    budget_exhausted: bool = False
+    skipped_too_large: list[str] = field(default_factory=list)
+    skipped_over_budget: list[str] = field(default_factory=list)
+
+    @property
+    def skipped_count(self) -> int:
+        return len(self.skipped_too_large) + len(self.skipped_over_budget)
+
+    @property
+    def is_partial(self) -> bool:
+        """True when the reader did not see the whole target."""
+        return self.budget_exhausted or self.skipped_count > 0
 
 
 # --- Agent Context ---
@@ -234,6 +271,7 @@ class Battle:
     status: BattleStatus
     started_at: datetime
     ended_at: datetime | None = None
+    scan_scope: ScanScope | None = None
 
 
 # --- Result type for error handling ---

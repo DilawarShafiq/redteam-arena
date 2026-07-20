@@ -3,14 +3,13 @@
 from __future__ import annotations
 
 import os
-import tempfile
 import shutil
+import tempfile
 
 import pytest
 
-from redteam_arena.core.file_reader import read_codebase, format_files_for_prompt, has_source_files
+from redteam_arena.core.file_reader import format_files_for_prompt, has_source_files, read_codebase
 from redteam_arena.types import FileEntry
-
 
 # Tracks temp directories for cleanup
 _temp_dirs: list[str] = []

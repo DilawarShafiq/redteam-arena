@@ -1,6 +1,7 @@
 ---
 name: human-agent-trust
 description: Detect over-reliance exploitation and false authority patterns in agent outputs
+owasp_asi: ASI09  # OWASP Top 10 for Agentic Applications 2026 - Human-Agent Trust Exploitation
 tags:
   - owasp-agentic-2026
   - security

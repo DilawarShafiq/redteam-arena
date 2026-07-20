@@ -4,10 +4,7 @@ from __future__ import annotations
 
 import json
 
-import pytest
-
 from redteam_arena.agents.response_parser import parse_findings, parse_mitigations
-
 
 # --- Helpers ---
 

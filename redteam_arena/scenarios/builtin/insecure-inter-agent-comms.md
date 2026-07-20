@@ -1,6 +1,7 @@
 ---
 name: insecure-inter-agent-comms
 description: Detect agent-in-the-middle attacks, message spoofing, and insecure communication
+owasp_asi: ASI07  # OWASP Top 10 for Agentic Applications 2026 - Insecure Inter-Agent Communication
 tags:
   - owasp-agentic-2026
   - security

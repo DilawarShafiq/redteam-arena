@@ -1,6 +1,7 @@
 ---
 name: agent-goal-hijack
 description: Detect agent objective manipulation through embedded instructions in processed data
+owasp_asi: ASI01  # OWASP Top 10 for Agentic Applications 2026 - Agent Goal Hijack
 tags:
   - owasp-agentic-2026
   - security

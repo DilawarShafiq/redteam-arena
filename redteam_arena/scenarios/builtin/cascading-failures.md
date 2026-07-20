@@ -1,6 +1,7 @@
 ---
 name: cascading-failures
 description: Detect error propagation and resilience gaps in multi-agent systems
+owasp_asi: ASI08  # OWASP Top 10 for Agentic Applications 2026 - Cascading Agent Failures
 tags:
   - owasp-agentic-2026
   - security

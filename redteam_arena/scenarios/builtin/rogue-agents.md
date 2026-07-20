@@ -1,6 +1,7 @@
 ---
 name: rogue-agents
 description: Detect behavioral drift, objective deviation, and missing agent governance controls
+owasp_asi: ASI10  # OWASP Top 10 for Agentic Applications 2026 - Rogue Agents
 tags:
   - owasp-agentic-2026
   - security

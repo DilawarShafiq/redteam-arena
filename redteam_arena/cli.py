@@ -260,18 +260,21 @@ async def _run_single_battle(
     """Run a single battle with all options."""
     from redteam_arena.agents.auditor_agent import AuditorAgent
     from redteam_arena.agents.blue_agent import BlueAgent
+    from redteam_arena.agents.provider import Provider
     from redteam_arena.agents.provider_registry import create_provider
     from redteam_arena.agents.red_agent import RedAgent
     from redteam_arena.core.battle_engine import BattleEngine, BattleEngineOptions
     from redteam_arena.core.battle_store import BattleStore
     from redteam_arena.reports.battle_report import generate_report, write_report
 
+    provider: Provider
     if mock_llm:
         from redteam_arena.agents.mock_provider import MockProvider
-        provider = MockProvider()  # type: ignore[assignment]
+        provider = MockProvider()
     else:
         provider = create_provider(provider_id, model=model)  # type: ignore[arg-type]
 
+    red_agent: RedAgent | AuditorAgent
     if agent_mode == "auditor":
         red_agent = AuditorAgent(provider, model=model)
     else:
@@ -446,10 +449,18 @@ async def _list_async(tags: list[str], exclude_tags: list[str], scenario_dir: st
 
     click.echo("\nAvailable Scenarios:\n")
     for s in scenarios:
-        name = s.name.ljust(30)
+        name = s.name.ljust(32)
+        asi = f"{s.owasp_asi}  " if s.owasp_asi else "       "
         tag_str = f" [{', '.join(s.tags)}]" if s.tags else ""
-        click.echo(f"  {name}{s.description}{tag_str}")
+        click.echo(f"  {asi}{name}{s.description}{tag_str}")
+
+    covered = sorted({s.owasp_asi for s in scenarios if s.owasp_asi})
     click.echo(f"\n  {len(scenarios)} scenario(s) available.")
+    if covered:
+        click.echo(
+            f"  OWASP Top 10 for Agentic Applications 2026: {len(covered)}/10 covered "
+            f"({', '.join(covered)})"
+        )
     click.echo("  Usage: redteam-arena battle <directory> --scenario <name>\n")
 
 

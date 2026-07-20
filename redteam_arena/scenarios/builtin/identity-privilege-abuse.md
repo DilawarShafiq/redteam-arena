@@ -1,6 +1,7 @@
 ---
 name: identity-privilege-abuse
 description: Detect credential reuse and privilege escalation in agent systems
+owasp_asi: ASI03  # OWASP Top 10 for Agentic Applications 2026 - Agent Identity & Privilege Abuse
 tags:
   - owasp-agentic-2026
   - security
