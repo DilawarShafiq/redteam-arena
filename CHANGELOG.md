@@ -6,7 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [Unreleased]
+## [0.0.6] — 2026-07-21
+
+A correctness release continuing 0.0.5: the remaining audit items are fixed —
+`--auto-fix` is safe, SARIF works with GitHub code scanning, and scan coverage
+is configurable.
 
 ### Added
 - **The scan budget is configurable.** The reader stopped at a fixed 100 KB and could not be raised, so large codebases were only ever partially covered. `--max-scan-kb` (and `maxScanKb` in `.redteamarena.yml`) now sets the budget; raising it also lifts the old 64 KB per-file cap so large single files are no longer silently dropped. This is a single pass bounded by the model's context window — there is no multi-pass API-cost multiplier. Combined with the scope disclosure added in 0.0.5, coverage is now both adjustable and always stated.
