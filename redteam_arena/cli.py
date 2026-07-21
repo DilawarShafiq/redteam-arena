@@ -63,6 +63,7 @@ def cli() -> None:
 @click.option("-o", "--output", default=None, help="Output file path")
 @click.option("--diff/--no-diff", default=False, help="Only scan changed files (git diff)")
 @click.option("--diff-base", default="HEAD~1", show_default=True, help="Git ref for diff base")
+@click.option("--max-scan-kb", default=None, type=int, help="Source budget in KB to read into one battle (default 100). Larger = more coverage, bigger prompt.")
 @click.option("--auto-fix/--no-auto-fix", default=False, help="Write fix proposals as files (does not modify source)")
 @click.option("--auto-fix-branch", is_flag=True, default=False, help="Also commit each proposal to its own git branch")
 @click.option("--auto-fix-dry-run", is_flag=True, default=False, help="Preview proposals without writing them")
@@ -84,6 +85,7 @@ def battle(
     output: str | None,
     diff: bool,
     diff_base: str,
+    max_scan_kb: int | None,
     auto_fix: bool,
     auto_fix_branch: bool,
     auto_fix_dry_run: bool,
@@ -109,6 +111,7 @@ def battle(
                 output_path=output or "",
                 diff_only=diff,
                 diff_base=diff_base,
+                max_scan_kb=max_scan_kb,
                 auto_fix=auto_fix,
                 auto_fix_branch=auto_fix_branch,
                 auto_fix_dry_run=auto_fix_dry_run,
@@ -140,6 +143,7 @@ async def _battle_async(
     output_path: str,
     diff_only: bool,
     diff_base: str,
+    max_scan_kb: int | None,
     auto_fix: bool,
     auto_fix_branch: bool,
     auto_fix_dry_run: bool,
@@ -195,6 +199,11 @@ async def _battle_async(
 
     # Resolve model
     resolved_model = model or (file_config.model if file_config else None) or ""
+    resolved_max_scan_kb = (
+        max_scan_kb
+        if max_scan_kb is not None
+        else (file_config.max_scan_kb if file_config else None)
+    ) or 0
 
     # Handle meta-scenarios
     if scenario.is_meta and scenario.sub_scenarios:
@@ -209,6 +218,7 @@ async def _battle_async(
                     rounds=rounds,
                     provider_id=resolved_provider,  # type: ignore[arg-type]
                     model=resolved_model,
+                    max_scan_kb=resolved_max_scan_kb,
                     report_format=report_format,
                     output_path=output_path,
                     diff_only=diff_only,
@@ -230,6 +240,7 @@ async def _battle_async(
         rounds=rounds,
         provider_id=resolved_provider,  # type: ignore[arg-type]
         model=resolved_model,
+        max_scan_kb=resolved_max_scan_kb,
         report_format=report_format,
         output_path=output_path,
         diff_only=diff_only,
@@ -252,6 +263,7 @@ async def _run_single_battle(
     rounds: int,
     provider_id: str,
     model: str,
+    max_scan_kb: int = 0,
     report_format: str,
     output_path: str,
     diff_only: bool,
@@ -310,6 +322,7 @@ async def _run_single_battle(
         provider=provider_id,  # type: ignore[arg-type]
         model=model,
         format=report_format,  # type: ignore[arg-type]
+        max_scan_bytes=max_scan_kb * 1024,
     )
 
     engine = BattleEngine(

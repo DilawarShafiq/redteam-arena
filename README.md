@@ -106,6 +106,7 @@ Run a security battle against a target codebase.
 | `-m, --model <name>` | Specific model to use | provider default |
 | `-f, --format <fmt>` | Report format: `markdown`, `json`, `sarif`, `html`, `compliance` | `markdown` |
 | `-o, --output <path>` | Output file path | auto-generated |
+| `--max-scan-kb <n>` | Source budget in KB read into one battle. Raise to cover a larger codebase (bounded by the model's context window — single pass, no extra API calls). | `100` |
 | `--agent-mode <mode>` | Agent focus: `attacker` (default) or `auditor` | `attacker` |
 | `--mock-llm` | Use a mock LLM for testing/demo (fast & free) | `false` |
 | `--diff` | Only scan changed files (git diff) | `false` |
@@ -349,7 +350,18 @@ provider: claude         # claude | openai | gemini | ollama
 model: claude-sonnet-4-20250514
 rounds: 5
 format: markdown         # markdown | json | sarif | html
+maxScanKb: 100           # source budget per battle, in KB (single pass)
 ```
+
+### Scan coverage
+
+A battle reads source into a single prompt up to `maxScanKb` (default 100 KB),
+in alphabetical order, then stops. Every report states how much was read and
+warns when a scan was partial, so a review of part of a codebase is never
+presented as a full one. To cover more, raise the budget — `--max-scan-kb 500`,
+or `maxScanKb` in config. This stays a single request bounded by your model's
+context window; there is no multi-pass cost multiplier. For very large
+repositories, scope each run instead (`battle ./src/auth`, or `--diff`).
 
 ## CI/CD Integration
 

@@ -12,7 +12,12 @@ from datetime import datetime
 from redteam_arena.agents.agent import Agent
 from redteam_arena.agents.response_parser import parse_findings, parse_mitigations
 from redteam_arena.core.event_system import BattleEventSystem
-from redteam_arena.core.file_reader import has_source_files, read_codebase
+from redteam_arena.core.file_reader import (
+    MAX_FILE_SIZE,
+    MAX_TOTAL_SIZE,
+    has_source_files,
+    read_codebase,
+)
 from redteam_arena.core.finding_validator import validate_findings
 from redteam_arena.display import (
     display_agent_done,
@@ -84,6 +89,7 @@ class BattleEngine:
             status=self._battle.status,
             started_at=self._battle.started_at,
             ended_at=self._battle.ended_at,
+            scan_scope=self._battle.scan_scope,
         )
 
     async def run(self) -> Battle:
@@ -94,7 +100,16 @@ class BattleEngine:
             files = self._override_files
             scope.files_read = len(files)
         else:
-            code_result = await read_codebase(self._config.target_dir, scope=scope)
+            budget = self._config.max_scan_bytes or MAX_TOTAL_SIZE
+            code_result = await read_codebase(
+                self._config.target_dir,
+                # Let a single file up to the whole budget through: when the
+                # budget is raised, the 64KB per-file default would otherwise
+                # silently drop large files the user meant to include.
+                max_file_size=max(MAX_FILE_SIZE, budget),
+                max_total_size=budget,
+                scope=scope,
+            )
             if not code_result.ok:
                 raise RuntimeError(code_result.error.args[0] if code_result.error.args else str(code_result.error))
             files = code_result.value

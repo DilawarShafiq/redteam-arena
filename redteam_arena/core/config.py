@@ -34,6 +34,7 @@ class RedTeamConfig:
     format: ReportFormat | None = None
     output: str | None = None
     fail_on: Severity | None = None
+    max_scan_kb: int | None = None
 
 
 async def load_config(
@@ -81,6 +82,10 @@ def _validate_config(raw: dict) -> RedTeamConfig:
     rounds = raw.get("rounds")
     if isinstance(rounds, (int, float)) and rounds > 0:
         config.rounds = int(rounds)
+
+    max_scan_kb = raw.get("maxScanKb") or raw.get("max_scan_kb")
+    if isinstance(max_scan_kb, (int, float)) and max_scan_kb > 0:
+        config.max_scan_kb = int(max_scan_kb)
 
     scenario = raw.get("scenario")
     if isinstance(scenario, str):

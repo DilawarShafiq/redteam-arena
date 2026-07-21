@@ -173,6 +173,11 @@ class BattleConfig:
     provider: ProviderId = "claude"
     model: str = ""
     format: ReportFormat = "markdown"
+    # Total source bytes read into one battle. The reader stops here, so raising
+    # it widens coverage of large repos at the cost of a bigger prompt. Bounded
+    # by the model's context window, not by multiple passes -- there is no
+    # per-request cost multiplier. 0 means use the reader default.
+    max_scan_bytes: int = 0
 
 
 # --- Battle Event (discriminated union via type field) ---
